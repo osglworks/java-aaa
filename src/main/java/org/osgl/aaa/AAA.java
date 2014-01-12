@@ -21,6 +21,8 @@ public enum  AAA {
 
     private static final Map<Class, DynamicPermissionCheckHelper> dynamicCheckers = C.newMap();
 
+    private static final ThreadLocal<AAAContext> context = new ThreadLocal<AAAContext>();
+
     /**
      * Store a guarded resource to the thread local
      *
@@ -30,7 +32,7 @@ public enum  AAA {
         target.set(tgt);
     }
 
-    private static Object getTarget() {
+    private static Object target() {
         return target.get();
     }
 
@@ -39,6 +41,27 @@ public enum  AAA {
      */
     public static void clearTarget() {
         target.remove();
+    }
+
+    /**
+     * Set AAAContext to thread local
+     *
+     * @param context
+     */
+    public static void setContext(AAAContext context) {
+        if (null == context) AAA.context.remove();
+        else AAA.context.set(context);
+    }
+
+    /**
+     * Clear AAAContext thread local
+     */
+    public static void clearContext() {
+        AAA.context.remove();
+    }
+
+    private static AAAContext context() {
+        return context.get();
     }
 
     public static <T> void registerDynamicPermissionChecker(DynamicPermissionCheckHelper<T> checker, Class<T> clz) {
@@ -87,4 +110,67 @@ public enum  AAA {
         if (null == dc) return false;
         return dc.isAssociated(o, user);
     }
+
+    private static void noAccess() {
+        throw new NoAccessException();
+    }
+
+    private static void noAccess(String reason) {
+        throw new NoAccessException(reason);
+    }
+
+    public static boolean hasPermission(String permName, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        Principal user = context.getCurrentPrincipal();
+        if (null == user) {
+            if (!allowSystem) noAccess("Cannot find current principal");
+            user = context.getSystemPrincipal();
+        }
+        AAAPersistentService db = context.getPersistentService();
+        Permission perm = db.findByName(permName, Permission.class);
+        if (null == perm) return false;
+        AuthorizationService auth = context.getAuthorizationService();
+        Collection<Permission> perms = auth.getAllPermissions(user, context);
+        return perms.contains(perm);
+    }
+
+    /**
+     * Authorize by permission. {@link org.osgl.aaa.AllowSystemAccount system account is allowed}
+     * @param perm the permission name
+     * @throws NoAccessException if the {@link AAAContext#getCurrentPrincipal() current principal}
+     *                           does not have required permission
+     */
+    public static void requirePermission(String perm) throws NoAccessException {
+        requirePermission(perm, true);
+    }
+
+    public static void requirePermission(String permName, boolean allowSystem) {
+        if (!hasPermission(permName, allowSystem)) noAccess();
+    }
+
+    public static boolean hasPrivilege(String privName, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        Principal user = context.getCurrentPrincipal();
+        if (null == user) {
+            if (!allowSystem) noAccess("Cannot find current principal");
+            user = context.getSystemPrincipal();
+        }
+        AAAPersistentService db = context.getPersistentService();
+        Privilege priv = db.findByName(privName, Privilege.class);
+        if (null == priv) return false;
+        AuthorizationService auth = context.getAuthorizationService();
+        Privilege userPriv = auth.getPrivilege(user, context);
+        return userPriv.getLevel() >= priv.getLevel();
+    }
+
+    public static void requirePrivilege(String privName, boolean allowSystem) {
+        if (!hasPrivilege(privName, allowSystem)) noAccess();
+    }
+
+    public static void requirePrivilege(String privName) {
+        requirePrivilege(privName, true);
+    }
+
 }

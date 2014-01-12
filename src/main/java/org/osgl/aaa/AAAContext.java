@@ -20,6 +20,12 @@ public interface AAAContext {
     AuthorizationService getAuthorizationService();
 
     /**
+     * Returns the {@link org.osgl.aaa.AAAPersistentService} implementation
+     * @return the AAA persistent service
+     */
+    AAAPersistentService getPersistentService();
+
+    /**
      * Returns the system principal which is used by system to set up security context for
      * background tasks
      *
