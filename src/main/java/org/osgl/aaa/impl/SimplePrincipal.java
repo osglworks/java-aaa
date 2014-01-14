@@ -74,6 +74,12 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
         return list;
     }
 
+    public static final Principal createSystemPrincipal(String name) {
+        C.List<SimpleRole> roles = C.list();
+        C.List<SimplePermission> perms = C.list();
+        return new SimplePrincipal(name, null, roles, perms);
+    }
+
     /**
      * The Builder can be used to build up a simple principal
      */

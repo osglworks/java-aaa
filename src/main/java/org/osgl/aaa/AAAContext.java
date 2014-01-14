@@ -33,6 +33,17 @@ public interface AAAContext {
      */
     Principal getSystemPrincipal();
 
+    int getSuperUserLevel();
+
+    boolean allowSuperUser();
+
+    /**
+     * Set the current principal to a thread local variable. If the principal specified
+     * is null then the thread local variable should be removed
+     * @param user
+     */
+    void setCurrentPrincipal(Principal user);
+
     /**
      * Returns a principal that initiate the current session
      * @return the current principal
@@ -40,12 +51,14 @@ public interface AAAContext {
     Principal getCurrentPrincipal();
 
     /**
-     * Store a guarded target object to a thread local variable
+     * Store a guarded target object to a thread local variable. If target specified
+     * is null, then the thread local variable should be removed
      *
      * @param target the guarded object
-     * @throws java.lang.NullPointerException if the target object is {@code null}
+     * @return the previous guarded target
      */
-    void setGuardedTarget(Object target) throws NullPointerException;
+    Object setGuardedTarget(Object target);
+
 
     /**
      * Get the guarded target object from the thread local variable
