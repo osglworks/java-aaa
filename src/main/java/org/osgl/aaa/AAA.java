@@ -112,6 +112,12 @@ public enum  AAA {
                 if (null != dc) break;
             }
         }
+        if (null == dc) {
+            while (null == dc && c != null) {
+                c = c.getSuperclass();
+                dc = dynamicCheckers.get(c);
+            }
+        }
         if (null == dc) return false;
         return dc.isAssociated(o, user);
     }
