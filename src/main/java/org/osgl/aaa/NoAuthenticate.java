@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE})
 public @interface NoAuthenticate {
 }
