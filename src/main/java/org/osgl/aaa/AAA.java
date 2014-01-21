@@ -154,6 +154,33 @@ public enum  AAA {
         }
     }
 
+    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        Principal user = context.getCurrentPrincipal();
+        if (null == user) {
+            if (!allowSystem) noAccess("Cannot find current principal");
+            user = context.getSystemPrincipal();
+        }
+        Permission perm = permission;
+        if (null == perm) return false;
+
+        if (null == target) {
+            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
+        }
+        Object prevTarget = context.getGuardedTarget();
+        context.setGuardedTarget(target);
+        try {
+            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
+        } finally {
+            context.setGuardedTarget(prevTarget);
+        }
+    }
+
+    public static void requirePermission(Permission perm) throws NoAccessException {
+        requirePermission(null, perm, true);
+    }
+
     /**
      * Authorize by permission. {@link org.osgl.aaa.AllowSystemAccount system account is allowed}
      * @param perm the permission name
@@ -164,16 +191,45 @@ public enum  AAA {
         requirePermission(null, perm, true);
     }
 
+    public static void requirePermission(Permission perm, boolean allowSystem) throws NoAccessException {
+        requirePermission(null, perm, allowSystem);
+    }
+
     public static void requirePermission(String perm, boolean allowSystem) throws NoAccessException {
         requirePermission(null, perm, allowSystem);
+    }
+
+    public static void requirePermission(Object target, Permission perm) throws NoAccessException {
+        requirePermission(target, perm, true);
     }
 
     public static void requirePermission(Object target, String perm) throws NoAccessException {
         requirePermission(target, perm, true);
     }
 
+    public static void requirePermission(Object target, Permission permission, boolean allowSystem) {
+        if (!hasPermission(target, permission, allowSystem)) noAccess();
+    }
+
     public static void requirePermission(Object target, String permName, boolean allowSystem) {
         if (!hasPermission(target, permName, allowSystem)) noAccess();
+    }
+
+    public static boolean hasPrivilege(Object target, Privilege privilege, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        Principal user = context.getCurrentPrincipal();
+        if (null == user) {
+            if (!allowSystem) noAccess("Cannot find current principal");
+            user = context.getSystemPrincipal();
+        }
+        AAAPersistentService db = context.getPersistentService();
+        Privilege priv = privilege;
+        if (null == priv) return false;
+        AuthorizationService auth = context.getAuthorizationService();
+        Privilege userPriv = auth.getPrivilege(user, context);
+        if (null == userPriv) return false;
+        return userPriv.getLevel() >= priv.getLevel();
     }
 
     public static boolean hasPrivilege(Object target, String privName, boolean allowSystem) {
@@ -193,20 +249,69 @@ public enum  AAA {
         return userPriv.getLevel() >= priv.getLevel();
     }
 
+    public static void requirePrivilege(Object target, Privilege privilege, boolean allowSystem) {
+        if (!hasPrivilege(target, privilege, allowSystem)) noAccess();
+    }
+
     public static void requirePrivilege(Object target, String privName, boolean allowSystem) {
         if (!hasPrivilege(target, privName, allowSystem)) noAccess();
+    }
+
+    public static void requirePrivilege(Object target, Privilege privilege) {
+        requirePrivilege(target, privilege, true);
     }
 
     public static void requirePrivilege(Object target, String privName) {
         requirePrivilege(target, privName, true);
     }
 
+    public static void requirePrivilege(Privilege privilege, boolean allowSystem) {
+        requirePrivilege(null, privilege, allowSystem);
+    }
+
     public static void requirePrivilege(String privName, boolean allowSystem) {
         requirePrivilege(null, privName, allowSystem);
     }
 
+    public static void requirePrivilege(Privilege privilege) {
+        requirePrivilege(null, privilege, true);
+    }
+
     public static void requirePrivilege(String privName) {
         requirePrivilege(null, privName, true);
+    }
+
+    private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        Principal user = context.getCurrentPrincipal();
+        if (null == user) {
+            if (!allowSystem) noAccess("Cannot find current principal");
+            user = context.getSystemPrincipal();
+        }
+        AAAPersistentService db = context.getPersistentService();
+        Privilege priv = privilege;
+        AuthorizationService auth = context.getAuthorizationService();
+        if (null != priv) {
+            Privilege userPriv = auth.getPrivilege(user, context);
+            if (userPriv.getLevel() >= priv.getLevel()) return true;
+        }
+
+        Permission perm = permission;
+        if (null == perm) {
+            return false;
+        }
+
+        if (null == target) {
+            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
+        }
+        Object prevTarget = context.getGuardedTarget();
+        context.setGuardedTarget(target);
+        try {
+            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
+        } finally {
+            context.setGuardedTarget(prevTarget);
+        }
     }
 
     private static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
@@ -224,7 +329,6 @@ public enum  AAA {
             Privilege userPriv = auth.getPrivilege(user, context);
             if (userPriv.getLevel() >= priv.getLevel()) return true;
         }
-
         Permission perm = db.findByName(permission, Permission.class);
         if (null == perm) {
             return false;
@@ -242,16 +346,32 @@ public enum  AAA {
         }
     }
 
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
+        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem)) noAccess();
+    }
+
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
         if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem)) noAccess();
+    }
+
+    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege) {
+        requirePermissionOrPrivilege(null, permission, privilege, true);
     }
 
     public static void requirePermissionOrPrivilege(String permission, String privilege) {
         requirePermissionOrPrivilege(null, permission, privilege, true);
     }
 
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege) {
+        requirePermissionOrPrivilege(target, permission, privilege, true);
+    }
+
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege) {
         requirePermissionOrPrivilege(target, permission, privilege, true);
+    }
+
+    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem) {
+        requirePermissionOrPrivilege(null, permission, privilege, allowSystem);
     }
 
     public static void requirePermissionOrPrivilege(String permission, String privilege, boolean allowSystem) {
