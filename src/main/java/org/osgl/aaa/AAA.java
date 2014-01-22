@@ -4,6 +4,7 @@ import org.osgl.util.C;
 import org.osgl.util.E;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -104,22 +105,55 @@ public enum  AAA {
         Object o = context.getGuardedTarget();
         E.NPE(o);
         Class<?> c = o.getClass();
-        DynamicPermissionCheckHelper dc = dynamicCheckers.get(c);
-        if (null == dc) {
-            Class[] classes = c.getClasses();
-            for (Class c0: classes) {
-                dc = dynamicCheckers.get(c0);
-                if (null != dc) break;
-            }
-        }
-        if (null == dc) {
-            while (null == dc && c != null) {
-                c = c.getSuperclass();
-                dc = dynamicCheckers.get(c);
-            }
-        }
-        if (null == dc) return false;
+        DynamicPermissionCheckHelper dc = cachedDynamicPermissionCheckHelper(c);
         return dc.isAssociated(o, user);
+    }
+
+    private static DynamicPermissionCheckHelper searchDPCHfromInterfaces(Class<?> c) {
+        DynamicPermissionCheckHelper dc = dynamicCheckers.get(c);
+        if (null != dc) return dc;
+        Class[] classes = c.getClasses();
+        Class[] intfs = c.getInterfaces();
+        C.List<Class> cl = C.listOf(intfs).append(C.listOf(classes));
+        for (Class c0: cl) {
+            dc = dynamicCheckers.get(c0);
+            if (null != dc) return dc;
+        }
+        return null;
+    }
+
+    private static Map<Class, DynamicPermissionCheckHelper> dpchCache = new HashMap<Class, DynamicPermissionCheckHelper>();
+
+    private static final DynamicPermissionCheckHelper NULL_DPCH = new DynamicPermissionCheckHelper() {
+        @Override
+        public boolean isAssociated(Object target, Principal user) {
+            return false;
+        }
+    };
+
+    private static DynamicPermissionCheckHelper cachedDynamicPermissionCheckHelper(Class<?> c) {
+        DynamicPermissionCheckHelper dc = dpchCache.get(c);
+        if (null == dc) {
+            dc = searchForDynamicPermissionCheckHelper(c);
+            if (null == dc) {
+                dc = NULL_DPCH;
+            }
+            dpchCache.put(c, dc);
+        }
+        return dc;
+    }
+
+    private static DynamicPermissionCheckHelper searchForDynamicPermissionCheckHelper(Class<?> c) {
+        DynamicPermissionCheckHelper dc = searchDPCHfromInterfaces(c);
+        if (null != dc) return dc;
+        while (null == dc && c != null) {
+            c = c.getSuperclass();
+            dc = searchDPCHfromInterfaces(c);
+            if (null != dc) {
+                return dc;
+            }
+        }
+        return null;
     }
 
     private static void noAccess() {
@@ -215,7 +249,7 @@ public enum  AAA {
         if (!hasPermission(target, permName, allowSystem)) noAccess();
     }
 
-    public static boolean hasPrivilege(Object target, Privilege privilege, boolean allowSystem) {
+    public static boolean hasPrivilege(Privilege privilege, boolean allowSystem) {
         AAAContext context = context();
         if (null == context) noAccess("AAA context not found");
         Principal user = context.getCurrentPrincipal();
@@ -232,7 +266,7 @@ public enum  AAA {
         return userPriv.getLevel() >= priv.getLevel();
     }
 
-    public static boolean hasPrivilege(Object target, String privName, boolean allowSystem) {
+    public static boolean hasPrivilege(String privName, boolean allowSystem) {
         AAAContext context = context();
         if (null == context) noAccess("AAA context not found");
         Principal user = context.getCurrentPrincipal();
@@ -249,36 +283,20 @@ public enum  AAA {
         return userPriv.getLevel() >= priv.getLevel();
     }
 
-    public static void requirePrivilege(Object target, Privilege privilege, boolean allowSystem) {
-        if (!hasPrivilege(target, privilege, allowSystem)) noAccess();
-    }
-
-    public static void requirePrivilege(Object target, String privName, boolean allowSystem) {
-        if (!hasPrivilege(target, privName, allowSystem)) noAccess();
-    }
-
-    public static void requirePrivilege(Object target, Privilege privilege) {
-        requirePrivilege(target, privilege, true);
-    }
-
-    public static void requirePrivilege(Object target, String privName) {
-        requirePrivilege(target, privName, true);
-    }
-
     public static void requirePrivilege(Privilege privilege, boolean allowSystem) {
-        requirePrivilege(null, privilege, allowSystem);
+        if (!hasPrivilege(privilege, allowSystem)) noAccess();
     }
 
     public static void requirePrivilege(String privName, boolean allowSystem) {
-        requirePrivilege(null, privName, allowSystem);
+        if (!hasPrivilege(privName, allowSystem)) noAccess();
     }
 
     public static void requirePrivilege(Privilege privilege) {
-        requirePrivilege(null, privilege, true);
+        requirePrivilege(privilege, true);
     }
 
     public static void requirePrivilege(String privName) {
-        requirePrivilege(null, privName, true);
+        requirePrivilege(privName, true);
     }
 
     private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
@@ -294,7 +312,9 @@ public enum  AAA {
         AuthorizationService auth = context.getAuthorizationService();
         if (null != priv) {
             Privilege userPriv = auth.getPrivilege(user, context);
-            if (userPriv.getLevel() >= priv.getLevel()) return true;
+            if (null != userPriv && userPriv.getLevel() >= priv.getLevel()) {
+                return true;
+            }
         }
 
         Permission perm = permission;
