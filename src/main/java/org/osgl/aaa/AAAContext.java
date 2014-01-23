@@ -37,6 +37,8 @@ public interface AAAContext {
 
     boolean allowSuperUser();
 
+    boolean isSuperUser(Principal principal);
+
     /**
      * Set the current principal to a thread local variable. If the principal specified
      * is null then the thread local variable should be removed

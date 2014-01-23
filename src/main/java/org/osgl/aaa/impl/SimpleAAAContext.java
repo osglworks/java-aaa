@@ -59,6 +59,13 @@ public class SimpleAAAContext extends AAAContextBase {
     }
 
     @Override
+    public boolean isSuperUser(Principal principal) {
+        Privilege p = principal.getPrivilege();
+        if (null == p) return false;
+        return p.getLevel() >= getSuperUserLevel();
+    }
+
+    @Override
     public Principal getSystemPrincipal() {
         return system;
     }

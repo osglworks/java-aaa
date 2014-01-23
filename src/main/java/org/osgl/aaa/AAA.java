@@ -171,6 +171,8 @@ public enum  AAA {
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
             user = context.getSystemPrincipal();
+        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
+            return true;
         }
         AAAPersistentService db = context.getPersistentService();
         Permission perm = db.findByName(permName, Permission.class);
@@ -195,6 +197,8 @@ public enum  AAA {
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
             user = context.getSystemPrincipal();
+        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
+            return true;
         }
         Permission perm = permission;
         if (null == perm) return false;
@@ -257,7 +261,6 @@ public enum  AAA {
             if (!allowSystem) noAccess("Cannot find current principal");
             user = context.getSystemPrincipal();
         }
-        AAAPersistentService db = context.getPersistentService();
         Privilege priv = privilege;
         if (null == priv) return false;
         AuthorizationService auth = context.getAuthorizationService();
@@ -306,8 +309,9 @@ public enum  AAA {
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
             user = context.getSystemPrincipal();
+        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
+            return true;
         }
-        AAAPersistentService db = context.getPersistentService();
         Privilege priv = privilege;
         AuthorizationService auth = context.getAuthorizationService();
         if (null != priv) {
@@ -341,6 +345,8 @@ public enum  AAA {
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
             user = context.getSystemPrincipal();
+        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
+            return true;
         }
         AAAPersistentService db = context.getPersistentService();
         Privilege priv = db.findByName(privilege, Privilege.class);
