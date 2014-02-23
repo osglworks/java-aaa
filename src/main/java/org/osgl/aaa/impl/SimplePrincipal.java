@@ -6,6 +6,7 @@ import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.S;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,15 +37,15 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
      * @param roles
      * @param perms
      */
-    public SimplePrincipal(String name, Privilege privilege, List<? extends Role> roles, List<? extends Permission> perms) {
+    public SimplePrincipal(String name, Privilege privilege, Collection<? extends Role> roles, Collection<? extends Permission> perms) {
         super(name);
         this.privilege = privilege;
 
         List<Role> emptyRoles = C.list();
-        this.roles = null == roles ? emptyRoles : roles;
+        this.roles = null == roles ? emptyRoles : C.list(roles);
 
         List<Permission> emptyPerms = C.list();
-        this.perms = null == perms ? emptyPerms : perms;
+        this.perms = null == perms ? emptyPerms : C.list(perms);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.osgl.aaa.util;
 
 import org.osgl._;
+import org.osgl.cache.CacheService;
+import org.osgl.cache.CacheServiceProvider;
 import org.osgl.util.Crypto;
 import org.osgl.util.S;
 
@@ -54,6 +56,26 @@ public class Token implements Serializable {
             return now + period;
         }
     }
+    private static volatile CacheService cache;
+
+    private static CacheService cache() {
+        if (null != cache) {
+            return cache;
+        }
+
+        synchronized (Token.class) {
+            if (null == cache) {
+                String cacheName = System.getProperty("aaa.cache.name");
+                if (S.notEmpty(cacheName)) {
+                    cache = CacheServiceProvider.Impl.Auto.get(cacheName);
+                } else {
+                    cache = CacheServiceProvider.Impl.Auto.get();
+                }
+            }
+        }
+
+        return cache;
+    }
 
     public String oid;
     public boolean expired;
@@ -67,13 +89,13 @@ public class Token implements Serializable {
         return S.isEmpty(oid);
     }
 
-//    public boolean consumed() {
-//        return Cache.get("auth-tk-consumed-" + (oid + due)) != null;
-//    }
-//
-//    public void consume() {
-//        Cache.add("auth-tk-consumed-" + (oid + due), "true", (due + 1000 - System.currentTimeMillis())/1000 + "s");
-//    }
+    public boolean consumed() {
+        return cache().get("auth-tk-consumed-" + (oid + due)) != null;
+    }
+
+    public void consume() {
+        cache().put("auth-tk-consumed-" + (oid + due), "true", (int)(due + 1000 - System.currentTimeMillis())/1000);
+    }
 
     @Override
     public int hashCode() {

@@ -90,13 +90,19 @@
         <dependency>
             <groupId>org.osgl</groupId>
             <artifactId>osgl-tool</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.2</version>
         </dependency>
 
         <dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-api</artifactId>
-        	<version>1.7.5</version>
+        	<groupId>org.osgl</groupId>
+        	<artifactId>osgl-logging</artifactId>
+        	<version>0.1</version>
+        </dependency>
+
+        <dependency>
+        	<groupId>org.osgl</groupId>
+        	<artifactId>osgl-cache</artifactId>
+        	<version>0.1</version>
         </dependency>
 
         <dependency>
