@@ -2,6 +2,7 @@ package org.osgl.aaa;
 
 import org.osgl.util.C;
 import org.osgl.util.E;
+import org.osgl.util.S;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -100,7 +101,7 @@ public enum  AAA {
         boolean hasAccess = perms.contains(peG);
 
         if (!hasAccess) return false;
-        if (!peG.isDynamic()) return true;
+        if (!peG.isDynamic() || S.eq(AAA.SYSTEM, user.getName())) return true;
 
         Object o = context.getGuardedTarget();
         E.NPE(o);
