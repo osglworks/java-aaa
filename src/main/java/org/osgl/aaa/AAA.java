@@ -71,6 +71,12 @@ public enum  AAA {
         return context.get();
     }
 
+    public static Principal currentPrincipal() {
+        AAAContext ctx = context();
+        if (null == ctx) return null;
+        return ctx.getCurrentPrincipal();
+    }
+
     public static <T> void registerDynamicPermissionChecker(DynamicPermissionCheckHelper<T> checker, Class<T> clz) {
         dynamicCheckers.put(clz, checker);
     }
