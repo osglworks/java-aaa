@@ -20,8 +20,8 @@ import java.util.List;
 public class SimplePrincipal extends AAAObjectBase implements Principal {
 
     private Privilege privilege;
-    private List<? extends Role> roles;
-    private List<? extends Permission> perms;
+    private List<? extends Role> roles = C.list();
+    private List<? extends Permission> perms = C.list();
 
     /**
      * This constructor is designed to be used by tools like ORM to deserialize the object from
