@@ -51,7 +51,7 @@ public class AAAObjectBase implements AAAObject {
      */
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
     @Override
