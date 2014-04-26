@@ -64,7 +64,9 @@ public enum  AAA {
      * Clear AAAContext thread local
      */
     public static void clearContext() {
+        AAAContext ctx = AAA.context.get();
         AAA.context.remove();
+        ctx.setCurrentPrincipal(null);
     }
 
     private static AAAContext context() {
