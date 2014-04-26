@@ -65,8 +65,8 @@ public enum  AAA {
      */
     public static void clearContext() {
         AAAContext ctx = AAA.context.get();
+        if (null != ctx) ctx.setCurrentPrincipal(null);
         AAA.context.remove();
-        ctx.setCurrentPrincipal(null);
     }
 
     private static AAAContext context() {
