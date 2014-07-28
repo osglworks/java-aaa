@@ -50,9 +50,12 @@ public class Token implements Serializable {
          * @return
          */
         public long due() {
+            return due(seconds);
+        }
+
+        static long due(long seconds) {
             long now = System.currentTimeMillis();
             long period = seconds * 1000;
-            //return now + (period - now % period);
             return now + period;
         }
     }
@@ -128,6 +131,16 @@ public class Token implements Serializable {
 
     public static String generateToken(String privateKey, Life tl, String oid, String... payload) {
         long due = tl.due();
+        List<String> l = new ArrayList<String>(2 + payload.length);
+        l.add(oid);
+        l.add(String.valueOf(due));
+        l.addAll(Arrays.asList(payload));
+        String s = S.join("|", l);
+        return Crypto.encryptAES(s, privateKey);
+    }
+
+    public static String generateToken(String privateKey, long seconds, String oid, String... payload) {
+        long due = Life.due(seconds);
         List<String> l = new ArrayList<String>(2 + payload.length);
         l.add(oid);
         l.add(String.valueOf(due));
