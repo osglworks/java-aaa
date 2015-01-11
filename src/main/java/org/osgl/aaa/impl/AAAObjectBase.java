@@ -27,7 +27,7 @@ public class AAAObjectBase implements AAAObject {
      * @param name
      */
     protected AAAObjectBase(String name) {
-        if (S.empty(name)) throw new IllegalArgumentException("name cannot be empty string");
+        if (S.blank(name)) throw new IllegalArgumentException("name cannot be empty string");
         this.name = name;
     }
 

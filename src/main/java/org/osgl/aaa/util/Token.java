@@ -69,7 +69,7 @@ public class Token implements Serializable {
         synchronized (Token.class) {
             if (null == cache) {
                 String cacheName = System.getProperty("aaa.cache.name");
-                if (S.notEmpty(cacheName)) {
+                if (S.notBlank(cacheName)) {
                     cache = CacheServiceProvider.Impl.Auto.get(cacheName);
                 } else {
                     cache = CacheServiceProvider.Impl.Auto.get();
@@ -88,8 +88,16 @@ public class Token implements Serializable {
     }
     public List<String> payload = new ArrayList<String>();
 
+    @Deprecated
+    /**
+     * Deprecated. Use isBlank() instead
+     */
     public boolean isEmpty() {
         return S.isEmpty(oid);
+    }
+
+    public boolean isBlank() {
+        return S.isBlank(oid);
     }
 
     public boolean consumed() {
@@ -112,6 +120,7 @@ public class Token implements Serializable {
             Token that = (Token)obj;
             return S.eq(that.oid, this.oid) && that.due == this.due && _.eq(that.payload, this.payload);
         }
+
         return false;
     }
 
@@ -162,7 +171,7 @@ public class Token implements Serializable {
 
     public static Token parseToken(String privateKey, String token) {
         Token tk = new Token();
-        if (S.isEmpty(token)) return tk;
+        if (S.blank(token)) return tk;
         String s = "";
         try {
             s = Crypto.decryptAES(token, privateKey);
@@ -191,8 +200,9 @@ public class Token implements Serializable {
     }
 
     public static boolean isTokenValid(String privateKey, String oid, String token) {
-        if (S.isEmpty(oid)) return false;
-        if (S.isEmpty(token)) return false;
+        if (S.anyBlank(oid, token)) {
+            return false;
+        }
         String s = Crypto.decryptAES(token, privateKey);
         String[] sa = s.split("\\|");
         if (sa.length < 2) return false;

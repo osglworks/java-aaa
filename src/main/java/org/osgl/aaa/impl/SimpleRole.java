@@ -54,7 +54,7 @@ public class SimpleRole extends AAAObjectBase implements Role {
         protected String name;
         protected C.List<Permission> perms = C.newList();
         public Builder(String name) {
-            E.illegalArgumentIf(S.empty(name));
+            E.illegalArgumentIf(S.blank(name));
             this.name = name;
         }
         public Builder addPermission(SimplePermission perm) {

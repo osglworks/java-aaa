@@ -91,7 +91,7 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
         private C.List<SimplePermission> perms = C.newList();
 
         public Builder(String name) {
-            E.illegalArgumentIf(S.empty(name));
+            E.illegalArgumentIf(S.blank(name));
             this.name = name;
         }
 
