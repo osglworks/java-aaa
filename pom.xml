@@ -17,6 +17,9 @@
 <!-- history
 0.2-SNAPSHOT - base verion when history log started
 0.3-SNAPSHOT - upgrade to osgl-tool 0.4-SNAPSHOT
+0.4.1-SNAPSHOT
+* overload AAA with new set of methods that allow passing in AAAContext as parameter
+  thus allow AAA to be used in a scenario without ThreadLocal storage
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -25,7 +28,7 @@
     <groupId>org.osgl</groupId>
     <artifactId>aaa-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
 
     <name>Java AAA Service</name>
     <description>A simple authentication/authorization/accounting library</description>

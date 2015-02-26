@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by luog on 8/01/14.
+ * The facade to access osgl aaa security library functions
  */
 public enum  AAA {
     ;
@@ -173,9 +173,7 @@ public enum  AAA {
         throw new NoAccessException(reason);
     }
 
-    public static boolean hasPermission(Object target, String permName, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
+    public static boolean hasPermission(Object target, String permName, boolean allowSystem, AAAContext context) {
         Principal user = context.getCurrentPrincipal();
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
@@ -199,9 +197,13 @@ public enum  AAA {
         }
     }
 
-    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem) {
+    public static boolean hasPermission(Object target, String permName, boolean allowSystem) {
         AAAContext context = context();
         if (null == context) noAccess("AAA context not found");
+        return hasPermission(target, permName, allowSystem, context);
+    }
+
+    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
         Principal user = context.getCurrentPrincipal();
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
@@ -224,6 +226,12 @@ public enum  AAA {
         }
     }
 
+    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        return hasPermission(target, permission, allowSystem, context);
+    }
+
     public static void requirePermission(Permission perm) throws NoAccessException {
         requirePermission(null, perm, true);
     }
@@ -238,33 +246,60 @@ public enum  AAA {
         requirePermission(null, perm, true);
     }
 
+    public static void requirePermission(String perm, AAAContext context) throws NoAccessException {
+        requirePermission(null, perm, true, context);
+    }
+
     public static void requirePermission(Permission perm, boolean allowSystem) throws NoAccessException {
         requirePermission(null, perm, allowSystem);
+    }
+
+    public static void requirePermission(Permission perm, boolean allowSystem, AAAContext context) throws NoAccessException {
+        requirePermission(null, perm, allowSystem, context);
     }
 
     public static void requirePermission(String perm, boolean allowSystem) throws NoAccessException {
         requirePermission(null, perm, allowSystem);
     }
 
+    public static void requirePermission(String perm, boolean allowSystem, AAAContext context) throws NoAccessException {
+        requirePermission(null, perm, allowSystem, context);
+    }
+
     public static void requirePermission(Object target, Permission perm) throws NoAccessException {
         requirePermission(target, perm, true);
+    }
+
+    public static void requirePermission(Object target, Permission perm, AAAContext context) throws NoAccessException {
+        requirePermission(target, perm, true, context);
     }
 
     public static void requirePermission(Object target, String perm) throws NoAccessException {
         requirePermission(target, perm, true);
     }
 
+    public static void requirePermission(Object target, String perm, AAAContext context) throws NoAccessException {
+        requirePermission(target, perm, true, context);
+    }
+
     public static void requirePermission(Object target, Permission permission, boolean allowSystem) {
         if (!hasPermission(target, permission, allowSystem)) noAccess();
+    }
+
+    public static void requirePermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
+        if (!hasPermission(target, permission, allowSystem, context)) noAccess();
     }
 
     public static void requirePermission(Object target, String permName, boolean allowSystem) {
         if (!hasPermission(target, permName, allowSystem)) noAccess();
     }
 
-    public static boolean hasPrivilege(Privilege privilege, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
+
+    public static void requirePermission(Object target, String permName, boolean allowSystem, AAAContext context) {
+        if (!hasPermission(target, permName, allowSystem, context)) noAccess();
+    }
+
+    public static boolean hasPrivilege(Privilege privilege, boolean allowSystem, AAAContext context) {
         Principal user = context.getCurrentPrincipal();
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
@@ -278,9 +313,13 @@ public enum  AAA {
         return userPriv.getLevel() >= priv.getLevel();
     }
 
-    public static boolean hasPrivilege(String privName, boolean allowSystem) {
+    public static boolean hasPrivilege(Privilege privilege, boolean allowSystem) {
         AAAContext context = context();
         if (null == context) noAccess("AAA context not found");
+        return hasPrivilege(privilege, allowSystem, context);
+    }
+
+    public static boolean hasPrivilege(String privName, boolean allowSystem, AAAContext context) {
         Principal user = context.getCurrentPrincipal();
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
@@ -295,25 +334,45 @@ public enum  AAA {
         return userPriv.getLevel() >= priv.getLevel();
     }
 
-    public static void requirePrivilege(Privilege privilege, boolean allowSystem) {
-        if (!hasPrivilege(privilege, allowSystem)) noAccess();
-    }
-
-    public static void requirePrivilege(String privName, boolean allowSystem) {
-        if (!hasPrivilege(privName, allowSystem)) noAccess();
+    public static boolean hasPrivilege(String privName, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        return hasPrivilege(privName, allowSystem, context);
     }
 
     public static void requirePrivilege(Privilege privilege) {
         requirePrivilege(privilege, true);
     }
 
+    public static void requirePrivilege(Privilege privilege, AAAContext context) {
+        requirePrivilege(privilege, true, context);
+    }
+
     public static void requirePrivilege(String privName) {
         requirePrivilege(privName, true);
     }
 
-    private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
+    public static void requirePrivilege(String privName, AAAContext context) {
+        requirePrivilege(privName, true, context);
+    }
+
+    public static void requirePrivilege(Privilege privilege, boolean allowSystem) {
+        if (!hasPrivilege(privilege, allowSystem)) noAccess();
+    }
+
+    public static void requirePrivilege(Privilege privilege, boolean allowSystem, AAAContext ctx) {
+        if (!hasPrivilege(privilege, allowSystem, ctx)) noAccess();
+    }
+
+    public static void requirePrivilege(String privName, boolean allowSystem) {
+        if (!hasPrivilege(privName, allowSystem)) noAccess();
+    }
+
+    public static void requirePrivilege(String privName, boolean allowSystem, AAAContext ctx) {
+        if (!hasPrivilege(privName, allowSystem, ctx)) noAccess();
+    }
+
+    private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem, AAAContext context) {
         Principal user = context.getCurrentPrincipal();
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
@@ -347,9 +406,13 @@ public enum  AAA {
         }
     }
 
-    private static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
+    private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
         AAAContext context = context();
         if (null == context) noAccess("AAA context not found");
+        return hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context);
+    }
+
+    private static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem, AAAContext context) {
         Principal user = context.getCurrentPrincipal();
         if (null == user) {
             if (!allowSystem) noAccess("Cannot find current principal");
@@ -381,35 +444,73 @@ public enum  AAA {
         }
     }
 
+    private static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
+        AAAContext context = context();
+        if (null == context) noAccess("AAA context not found");
+        return hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context);
+    }
+
     public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
         if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem)) noAccess();
+    }
+
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem, AAAContext context) {
+        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context)) noAccess();
     }
 
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
         if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem)) noAccess();
     }
 
+    public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem, AAAContext ctx) {
+        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem, ctx)) noAccess();
+    }
+
     public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege) {
         requirePermissionOrPrivilege(null, permission, privilege, true);
+    }
+
+    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, AAAContext ctx) {
+        requirePermissionOrPrivilege(null, permission, privilege, true, ctx);
     }
 
     public static void requirePermissionOrPrivilege(String permission, String privilege) {
         requirePermissionOrPrivilege(null, permission, privilege, true);
     }
 
+    public static void requirePermissionOrPrivilege(String permission, String privilege, AAAContext ctx) {
+        requirePermissionOrPrivilege(null, permission, privilege, true, ctx);
+    }
+
     public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege) {
         requirePermissionOrPrivilege(target, permission, privilege, true);
+    }
+
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, AAAContext ctx) {
+        requirePermissionOrPrivilege(target, permission, privilege, true, ctx);
     }
 
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege) {
         requirePermissionOrPrivilege(target, permission, privilege, true);
     }
 
+    public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, AAAContext ctx) {
+        requirePermissionOrPrivilege(target, permission, privilege, true, ctx);
+    }
+
     public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem) {
         requirePermissionOrPrivilege(null, permission, privilege, allowSystem);
     }
 
+    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem, AAAContext ctx) {
+        requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
+    }
+
     public static void requirePermissionOrPrivilege(String permission, String privilege, boolean allowSystem) {
         requirePermissionOrPrivilege(null, permission, privilege, allowSystem);
+    }
+
+    public static void requirePermissionOrPrivilege(String permission, String privilege, boolean allowSystem, AAAContext ctx) {
+        requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
     }
 }
