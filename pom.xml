@@ -21,6 +21,7 @@
 * overload AAA with new set of methods that allow passing in AAAContext as parameter
   thus allow AAA to be used in a scenario without ThreadLocal storage
 * Remove unnecessary thread local usage in AAAContextBase
+* expose context() to public on AAA facade
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 

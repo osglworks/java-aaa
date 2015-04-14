@@ -69,7 +69,7 @@ public enum  AAA {
         AAA.context.remove();
     }
 
-    private static AAAContext context() {
+    public static AAAContext context() {
         return context.get();
     }
 
