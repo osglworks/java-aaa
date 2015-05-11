@@ -22,6 +22,8 @@
   thus allow AAA to be used in a scenario without ThreadLocal storage
 * Remove unnecessary thread local usage in AAAContextBase
 * expose context() to public on AAA facade
+0.4.2-SNAPSHOT
+* Fix NPE in AAA.searchForDynamicPermissionCheckHelper
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -30,7 +32,7 @@
     <groupId>org.osgl</groupId>
     <artifactId>aaa-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.4.2-SNAPSHOT</version>
 
     <name>Java AAA Service</name>
     <description>A simple authentication/authorization/accounting library</description>

@@ -7,6 +7,7 @@ target
 ## IDEA
 #################
 *.iml
+.idea
 
 #################
 ## Eclipse

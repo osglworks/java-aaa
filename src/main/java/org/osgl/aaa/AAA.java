@@ -153,16 +153,15 @@ public enum  AAA {
     }
 
     private static DynamicPermissionCheckHelper searchForDynamicPermissionCheckHelper(Class<?> c) {
-        DynamicPermissionCheckHelper dc = searchDPCHfromInterfaces(c);
-        if (null != dc) return dc;
-        while (null == dc && c != null) {
-            c = c.getSuperclass();
+        DynamicPermissionCheckHelper dc = null;
+        while (c != null) {
             dc = searchDPCHfromInterfaces(c);
             if (null != dc) {
                 return dc;
             }
+            c = c.getSuperclass();
         }
-        return null;
+        return dc;
     }
 
     private static void noAccess() {
