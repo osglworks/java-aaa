@@ -121,9 +121,8 @@ public enum  AAA {
     private static DynamicPermissionCheckHelper searchDPCHfromInterfaces(Class<?> c) {
         DynamicPermissionCheckHelper dc = dynamicCheckers.get(c);
         if (null != dc) return dc;
-        Class[] classes = c.getClasses();
         Class[] intfs = c.getInterfaces();
-        C.List<Class> cl = C.listOf(intfs).append(C.listOf(classes));
+        C.List<Class> cl = C.listOf(intfs).append();
         for (Class c0: cl) {
             dc = dynamicCheckers.get(c0);
             if (null != dc) return dc;
