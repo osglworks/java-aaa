@@ -122,7 +122,7 @@ public enum  AAA {
         DynamicPermissionCheckHelper dc = dynamicCheckers.get(c);
         if (null != dc) return dc;
         Class[] intfs = c.getInterfaces();
-        C.List<Class> cl = C.listOf(intfs).append();
+        C.List<Class> cl = C.listOf(intfs);
         for (Class c0: cl) {
             dc = dynamicCheckers.get(c0);
             if (null != dc) return dc;
