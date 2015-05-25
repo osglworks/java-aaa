@@ -17,7 +17,7 @@ public interface DynamicPermissionCheckHelper<T> {
      * on any permission</p>
      * @return a list of permission this dynamic permission check helper effect on
      */
-    List<Permission> permissions();
+    List<? extends Permission> permissions();
 
     /**
      * Check if a target resource is associated with a principal.

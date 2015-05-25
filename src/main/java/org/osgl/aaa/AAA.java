@@ -84,7 +84,7 @@ public enum  AAA {
     }
 
     public static <T> void registerDynamicPermissionChecker(DynamicPermissionCheckHelper<T> checker, Class<T> clz) {
-        List<Permission> l = checker.permissions();
+        List<? extends Permission> l = checker.permissions();
         if (l.isEmpty()) {
             dynamicCheckers.put(dpchKey(NULL_PERMISSION, clz), checker);
         } else {
