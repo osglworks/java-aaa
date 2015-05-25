@@ -138,6 +138,10 @@ public enum  AAA {
             dc = dynamicCheckers.get(dpchKey(p, c0));
             if (null != dc) return dc;
         }
+        if (null != p) {
+            // try the global dynamic permission check helper
+            return searchDPCHfromInterfaces(null, c);
+        }
         return null;
     }
 
