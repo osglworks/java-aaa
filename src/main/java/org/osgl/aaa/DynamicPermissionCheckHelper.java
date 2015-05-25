@@ -1,5 +1,7 @@
 package org.osgl.aaa;
 
+import java.util.List;
+
 /**
  * Dynamic permission check helper could be implemented by application to
  * provide a fain grained authorization on instance level
@@ -7,6 +9,15 @@ package org.osgl.aaa;
  * @author greenlaw110@gmail.com
  */
 public interface DynamicPermissionCheckHelper<T> {
+
+    /**
+     * Returns a list of permissions that this dynamic permission check helper
+     * could be used to check against the dynamic association.
+     * <p>If the helper returns an empty list then it means it could be used
+     * on any permission</p>
+     * @return a list of permission this dynamic permission check helper effect on
+     */
+    List<Permission> permissions();
 
     /**
      * Check if a target resource is associated with a principal.

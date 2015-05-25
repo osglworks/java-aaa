@@ -1,11 +1,13 @@
 package org.osgl.aaa;
 
+import org.osgl._;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.S;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,9 +28,11 @@ public enum  AAA {
 
     private static final ThreadLocal<Object> target = new ThreadLocal<Object>();
 
-    private static final Map<Class, DynamicPermissionCheckHelper> dynamicCheckers = C.newMap();
+    private static final Map<_.T2<Permission, Class>, DynamicPermissionCheckHelper> dynamicCheckers = C.newMap();
 
     private static final ThreadLocal<AAAContext> context = new ThreadLocal<AAAContext>();
+
+    private static final Permission NULL_PERMISSION = null;
 
     /**
      * Store a guarded resource to the thread local
@@ -80,7 +84,14 @@ public enum  AAA {
     }
 
     public static <T> void registerDynamicPermissionChecker(DynamicPermissionCheckHelper<T> checker, Class<T> clz) {
-        dynamicCheckers.put(clz, checker);
+        List<Permission> l = checker.permissions();
+        if (l.isEmpty()) {
+            dynamicCheckers.put(dpchKey(NULL_PERMISSION, clz), checker);
+        } else {
+            for (Permission p : l) {
+                dynamicCheckers.put(dpchKey(p, clz), checker);
+            }
+        }
     }
 
     /**
@@ -114,17 +125,17 @@ public enum  AAA {
         Object o = context.getGuardedTarget();
         E.NPE(o);
         Class<?> c = o.getClass();
-        DynamicPermissionCheckHelper dc = cachedDynamicPermissionCheckHelper(c);
+        DynamicPermissionCheckHelper dc = cachedDynamicPermissionCheckHelper(peG, c);
         return dc.isAssociated(o, user);
     }
 
-    private static DynamicPermissionCheckHelper searchDPCHfromInterfaces(Class<?> c) {
-        DynamicPermissionCheckHelper dc = dynamicCheckers.get(c);
+    private static DynamicPermissionCheckHelper searchDPCHfromInterfaces(Permission p, Class<?> c) {
+        DynamicPermissionCheckHelper dc = dynamicCheckers.get(dpchKey(p, c));
         if (null != dc) return dc;
         Class[] intfs = c.getInterfaces();
         C.List<Class> cl = C.listOf(intfs);
         for (Class c0: cl) {
-            dc = dynamicCheckers.get(c0);
+            dc = dynamicCheckers.get(dpchKey(p, c0));
             if (null != dc) return dc;
         }
         return null;
@@ -134,15 +145,21 @@ public enum  AAA {
 
     private static final DynamicPermissionCheckHelper NULL_DPCH = new DynamicPermissionCheckHelper() {
         @Override
+        public List<Permission> permissions() {
+            return C.list();
+        }
+
+        @Override
         public boolean isAssociated(Object target, Principal user) {
             return false;
         }
     };
 
-    private static DynamicPermissionCheckHelper cachedDynamicPermissionCheckHelper(Class<?> c) {
-        DynamicPermissionCheckHelper dc = dpchCache.get(c);
+    private static DynamicPermissionCheckHelper cachedDynamicPermissionCheckHelper(Permission p, Class<?> c) {
+        _.T2<Permission, Class> key = dpchKey(p, c);
+        DynamicPermissionCheckHelper dc = dpchCache.get(key);
         if (null == dc) {
-            dc = searchForDynamicPermissionCheckHelper(c);
+            dc = searchForDynamicPermissionCheckHelper(p, c);
             if (null == dc) {
                 dc = NULL_DPCH;
             }
@@ -151,10 +168,10 @@ public enum  AAA {
         return dc;
     }
 
-    private static DynamicPermissionCheckHelper searchForDynamicPermissionCheckHelper(Class<?> c) {
+    private static DynamicPermissionCheckHelper searchForDynamicPermissionCheckHelper(Permission p, Class<?> c) {
         DynamicPermissionCheckHelper dc = null;
         while (c != null) {
-            dc = searchDPCHfromInterfaces(c);
+            dc = searchDPCHfromInterfaces(p, c);
             if (null != dc) {
                 return dc;
             }
@@ -510,5 +527,9 @@ public enum  AAA {
 
     public static void requirePermissionOrPrivilege(String permission, String privilege, boolean allowSystem, AAAContext ctx) {
         requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
+    }
+
+    private static _.T2<Permission, Class> dpchKey(Permission p, Class c) {
+        return _.T2(p, c);
     }
 }
