@@ -1,5 +1,6 @@
 package org.osgl.aaa.impl;
 
+import org.osgl.aaa.AAAObject;
 import org.osgl.aaa.Permission;
 import org.osgl.aaa.Role;
 import org.osgl.util.C;
@@ -57,9 +58,18 @@ public class SimpleRole extends AAAObjectBase implements Role {
             E.illegalArgumentIf(S.blank(name));
             this.name = name;
         }
-        public Builder addPermission(SimplePermission perm) {
+        public Builder grantPermission(Permission perm) {
             E.NPE(perm);
             if (!perms.contains(perm)) perms.add(perm);
+            return this;
+        }
+        public Builder revokePermission(final String permName) {
+            E.NPE(permName);
+            perms = perms.remove(AAAObject.F.nameMatcher(permName));
+            return this;
+        }
+        public Builder revokeAllPermissions() {
+            perms.clear();
             return this;
         }
         public Role toRole() {

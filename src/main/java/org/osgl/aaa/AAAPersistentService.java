@@ -19,6 +19,13 @@ public interface AAAPersistentService {
     void remove(AAAObject aaaObject);
 
     /**
+     * Remove all AAAObject from persistent store
+     * @param clz
+     * @param <T>
+     */
+    <T extends AAAObject> void removeAll(Class<T> clz);
+
+    /**
      * Get the AAAObject by name and type. Where type should be one of
      * <ul>
      * <li>{@link org.osgl.aaa.Permission Permission.class}</li>
