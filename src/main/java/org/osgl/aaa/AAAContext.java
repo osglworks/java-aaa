@@ -1,29 +1,26 @@
 package org.osgl.aaa;
 
-/**
- * Created by luog on 8/01/14.
- */
-public interface AAAContext {
+public abstract class AAAContext {
 
     /**
      * Returns the {@link org.osgl.aaa.AuthenticationService} implementation
      *
      * @return the authentication service implementation
      */
-    AuthenticationService getAuthenticationService();
+    public abstract AuthenticationService getAuthenticationService();
 
     /**
      * Returns the {@link org.osgl.aaa.AuthorizationService} implementation
      *
      * @return the authorization service implementation
      */
-    AuthorizationService getAuthorizationService();
+    public abstract AuthorizationService getAuthorizationService();
 
     /**
      * Returns the {@link org.osgl.aaa.AAAPersistentService} implementation
      * @return the AAA persistent service
      */
-    AAAPersistentService getPersistentService();
+    public abstract AAAPersistentService getPersistentService();
 
     /**
      * Returns the system principal which is used by system to set up security context for
@@ -31,26 +28,26 @@ public interface AAAContext {
      *
      * @return the system principal
      */
-    Principal getSystemPrincipal();
+    public abstract Principal getSystemPrincipal();
 
-    int getSuperUserLevel();
+    public abstract int getSuperUserLevel();
 
-    boolean allowSuperUser();
+    public abstract boolean allowSuperUser();
 
-    boolean isSuperUser(Principal principal);
+    public abstract boolean isSuperUser(Principal principal);
 
     /**
      * Set the current principal to a thread local variable. If the principal specified
      * is null then the thread local variable should be removed
      * @param user
      */
-    void setCurrentPrincipal(Principal user);
+    public abstract void setCurrentPrincipal(Principal user);
 
     /**
      * Returns a principal that initiate the current session
      * @return the current principal
      */
-    Principal getCurrentPrincipal();
+    public abstract Principal getCurrentPrincipal();
 
     /**
      * Store a guarded target object to a thread local variable. If target specified
@@ -59,7 +56,7 @@ public interface AAAContext {
      * @param target the guarded object
      * @return the previous guarded target
      */
-    Object setGuardedTarget(Object target);
+    public abstract Object setGuardedTarget(Object target);
 
 
     /**
@@ -67,6 +64,77 @@ public interface AAAContext {
      *
      * @return the target
      */
-    Object getGuardedTarget();
+    public abstract Object getGuardedTarget();
 
+    public void requirePermission(Object target, Permission perm) throws NoAccessException {
+        AAA.requirePermission(target, perm, this);
+    }
+
+    public void requirePermission(Object target, String perm) throws NoAccessException {
+        AAA.requirePermission(target, perm, this);
+    }
+
+    public void requirePermission(Object target, Permission permission, boolean allowSystem) {
+        AAA.requirePermission(target, permission, allowSystem, this);
+    }
+
+    public void requirePermission(Object target, String permName, boolean allowSystem) {
+        AAA.requirePermission(target, permName, allowSystem, this);
+    }
+
+    public boolean hasPrivilege(Privilege privilege, boolean allowSystem) {
+        return AAA.hasPrivilege(privilege, allowSystem, this);
+    }
+
+    public boolean hasPrivilege(String privName, boolean allowSystem) {
+        return AAA.hasPrivilege(privName, allowSystem, this);
+    }
+
+    public void requirePrivilege(Privilege privilege) {
+        AAA.requirePrivilege(privilege, true, this);
+    }
+
+    public void requirePrivilege(String privName) {
+        AAA.requirePrivilege(privName, this);
+    }
+
+    public void requirePrivilege(Privilege privilege, boolean allowSystem) {
+        AAA.requirePrivilege(privilege, allowSystem, this);
+    }
+
+    public void requirePrivilege(String privName, boolean allowSystem) {
+        AAA.requirePrivilege(privName, allowSystem, this);
+    }
+
+    public void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
+        AAA.requirePermissionOrPrivilege(target, permission, privilege, allowSystem, this);
+    }
+
+    public void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
+        AAA.requirePermissionOrPrivilege(target, permission, privilege, allowSystem, this);
+    }
+
+    public void requirePermissionOrPrivilege(Permission permission, Privilege privilege) {
+        AAA.requirePermissionOrPrivilege(permission, privilege, this);
+    }
+
+    public void requirePermissionOrPrivilege(String permission, String privilege) {
+        AAA.requirePermissionOrPrivilege(permission, privilege, this);
+    }
+
+    public void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege) {
+        AAA.requirePermissionOrPrivilege(target, permission, privilege, this);
+    }
+
+    public void requirePermissionOrPrivilege(Object target, String permission, String privilege) {
+        AAA.requirePermissionOrPrivilege(target, permission, privilege, this);
+    }
+
+    public void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem) {
+        AAA.requirePermissionOrPrivilege(permission, privilege, allowSystem, this);
+    }
+
+    public void requirePermissionOrPrivilege(String permission, String privilege, boolean allowSystem) {
+        AAA.requirePermissionOrPrivilege(permission, privilege, allowSystem, this);
+    }
 }
