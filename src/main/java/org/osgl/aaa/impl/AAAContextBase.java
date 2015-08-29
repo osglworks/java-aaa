@@ -3,7 +3,7 @@ package org.osgl.aaa.impl;
 import org.osgl.aaa.AAAContext;
 import org.osgl.aaa.Principal;
 
-public abstract class AAAContextBase implements AAAContext {
+public abstract class AAAContextBase extends AAAContext {
 
     private Principal principal;
     private Object guarded;
