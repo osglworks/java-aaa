@@ -82,6 +82,22 @@ public abstract class AAAContext {
         AAA.requirePermission(target, permName, allowSystem, this);
     }
 
+    public void requirePermission(Permission perm) throws NoAccessException {
+        AAA.requirePermission(null, perm, this);
+    }
+
+    public void requirePermission(String perm) throws NoAccessException {
+        AAA.requirePermission(null, perm, this);
+    }
+
+    public void requirePermission(Permission perm, boolean allowSystem) throws NoAccessException {
+        AAA.requirePermission(null, perm, allowSystem, this);
+    }
+
+    public void requirePermission(String perm, boolean allowSystem) throws NoAccessException {
+        AAA.requirePermission(null, perm, allowSystem, this);
+    }
+
     public boolean hasPrivilege(Privilege privilege, boolean allowSystem) {
         return AAA.hasPrivilege(privilege, allowSystem, this);
     }
