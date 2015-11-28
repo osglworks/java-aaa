@@ -1,6 +1,6 @@
 package org.osgl.aaa;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.util.C;
 
@@ -44,49 +44,49 @@ public interface Principal extends AAAObject, java.security.Principal {
 
     public static abstract class F extends AAAObject.F {
 
-        public static _.F1<Principal, C.List<Role>> ROLE_GETTER = new _.F1<Principal, C.List<Role>>() {
+        public static $.F1<Principal, C.List<Role>> ROLE_GETTER = new $.F1<Principal, C.List<Role>>() {
             @Override
-            public C.List<Role> apply(Principal principal) throws NotAppliedException, _.Break {
+            public C.List<Role> apply(Principal principal) throws NotAppliedException, $.Break {
                 return C.list(principal.getRoles());
             }
         };
 
-        public static _.Visitor<Principal> roleVisitor(final _.Function<Role, ?> visitor) {
-            return new _.Visitor<Principal>() {
+        public static $.Visitor<Principal> roleVisitor(final $.Function<Role, ?> visitor) {
+            return new $.Visitor<Principal>() {
                 @Override
-                public void visit(Principal principal) throws _.Break {
+                public void visit(Principal principal) throws $.Break {
                     C.list(principal.getRoles()).accept(visitor);
                 }
             };
         }
 
-        public static _.F1<Principal, C.List<Permission>> PERMISSION_GETTER = new _.F1<Principal, C.List<Permission>>() {
+        public static $.F1<Principal, C.List<Permission>> PERMISSION_GETTER = new $.F1<Principal, C.List<Permission>>() {
             @Override
-            public C.List<Permission> apply(Principal principal) throws NotAppliedException, _.Break {
+            public C.List<Permission> apply(Principal principal) throws NotAppliedException, $.Break {
                 return C.list(principal.getPermissions());
             }
         };
 
-        public static _.Visitor<Principal> permissionVisitor(final _.Function<Permission, ?> visitor) {
-            return new _.Visitor<Principal>() {
+        public static $.Visitor<Principal> permissionVisitor(final $.Function<Permission, ?> visitor) {
+            return new $.Visitor<Principal>() {
                 @Override
-                public void visit(Principal principal) throws _.Break {
+                public void visit(Principal principal) throws $.Break {
                     C.list(principal.getPermissions()).accept(visitor);
                 }
             };
         }
 
-        public static _.F1<Principal, C.List<Permission>> ALL_PERMISSION_GETTER = new _.F1<Principal, C.List<Permission>>() {
+        public static $.F1<Principal, C.List<Permission>> ALL_PERMISSION_GETTER = new $.F1<Principal, C.List<Permission>>() {
             @Override
-            public C.List<Permission> apply(Principal principal) throws NotAppliedException, _.Break {
+            public C.List<Permission> apply(Principal principal) throws NotAppliedException, $.Break {
                 return C.list(principal.getAllPermissions());
             }
         };
 
-        public static _.Visitor<Principal> allPermissionVisitor(final _.Function<Permission, ?> visitor) {
-            return new _.Visitor<Principal>() {
+        public static $.Visitor<Principal> allPermissionVisitor(final $.Function<Permission, ?> visitor) {
+            return new $.Visitor<Principal>() {
                 @Override
-                public void visit(Principal principal) throws _.Break {
+                public void visit(Principal principal) throws $.Break {
                     C.list(principal.getAllPermissions()).accept(visitor);
                 }
             };

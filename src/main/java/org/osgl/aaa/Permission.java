@@ -1,6 +1,6 @@
 package org.osgl.aaa;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 
 /**
@@ -20,13 +20,13 @@ public interface Permission extends AAAObject, java.security.acl.Permission {
 
     public static abstract class F extends AAAObject.F {
 
-        public static _.Predicate<Permission> IS_DYNAMIC = new _.Predicate<Permission>() {
+        public static $.Predicate<Permission> IS_DYNAMIC = new $.Predicate<Permission>() {
             @Override
-            public boolean test(Permission permission) throws NotAppliedException, _.Break {
+            public boolean test(Permission permission) throws NotAppliedException, $.Break {
                 return permission.isDynamic();
             }
         };
 
-        public static _.Predicate<Permission> IS_STATIC = _.F.negate(IS_DYNAMIC);
+        public static $.Predicate<Permission> IS_STATIC = $.F.negate(IS_DYNAMIC);
     }
 }

@@ -1,6 +1,6 @@
 package org.osgl.aaa;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 
 /**
@@ -43,15 +43,15 @@ public interface Privilege extends AAAObject, Comparable<Privilege> {
 
     public static abstract class F extends AAAObject.F {
         ;
-        public static _.F1<Privilege, Integer> LEVEL_FETCHER = new _.F1<Privilege, Integer>() {
+        public static $.F1<Privilege, Integer> LEVEL_FETCHER = new $.F1<Privilege, Integer>() {
             @Override
-            public Integer apply(Privilege p) throws NotAppliedException, _.Break {
+            public Integer apply(Privilege p) throws NotAppliedException, $.Break {
                 return p.getLevel();
             }
         };
 
-        public static <T extends Privilege> _.F1<T, Integer> levelFetcher() {
-            return (_.F1<T, Integer>)LEVEL_FETCHER;
+        public static <T extends Privilege> $.F1<T, Integer> levelFetcher() {
+            return ($.F1<T, Integer>)LEVEL_FETCHER;
         }
     }
 }

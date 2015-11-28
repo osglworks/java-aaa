@@ -1,6 +1,6 @@
 package org.osgl.aaa.impl;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.util.C;
 import org.osgl.util.E;
@@ -66,9 +66,9 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
     @Override
     public C.List<Permission> getAllPermissions() {
         final C.List<Permission> list = getPermissions().lazy();
-        getRoles().accept(new _.Visitor<Role>() {
+        getRoles().accept(new $.Visitor<Role>() {
             @Override
-            public void visit(Role role) throws _.Break {
+            public void visit(Role role) throws $.Break {
                 list.append(role.getPermissions());
             }
         });

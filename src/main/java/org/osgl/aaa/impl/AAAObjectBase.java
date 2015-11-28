@@ -1,6 +1,6 @@
 package org.osgl.aaa.impl;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.aaa.AAAObject;
 import org.osgl.util.C;
 import org.osgl.util.S;
@@ -41,7 +41,7 @@ public class AAAObjectBase implements AAAObject {
      */
     @Override
     public int hashCode() {
-        return _.hc(name, getClass());
+        return $.hc(name, getClass());
     }
 
     /**
@@ -57,8 +57,8 @@ public class AAAObjectBase implements AAAObject {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (_.eq(obj.getClass(), getClass())) {
-            return _.eq(((AAAObject) obj).getName(), getName());
+        if ($.eq(obj.getClass(), getClass())) {
+            return $.eq(((AAAObject) obj).getName(), getName());
         }
         return false;
     }

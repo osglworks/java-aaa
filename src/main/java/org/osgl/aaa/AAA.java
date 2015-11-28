@@ -1,6 +1,6 @@
 package org.osgl.aaa;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.S;
@@ -28,7 +28,7 @@ public enum  AAA {
 
     private static final ThreadLocal<Object> target = new ThreadLocal<Object>();
 
-    private static final Map<_.T2<Permission, Class>, DynamicPermissionCheckHelper> dynamicCheckers = C.newMap();
+    private static final Map<$.T2<Permission, Class>, DynamicPermissionCheckHelper> dynamicCheckers = C.newMap();
 
     private static final ThreadLocal<AAAContext> context = new ThreadLocal<AAAContext>();
 
@@ -160,7 +160,7 @@ public enum  AAA {
     };
 
     private static DynamicPermissionCheckHelper cachedDynamicPermissionCheckHelper(Permission p, Class<?> c) {
-        _.T2<Permission, Class> key = dpchKey(p, c);
+        $.T2<Permission, Class> key = dpchKey(p, c);
         DynamicPermissionCheckHelper dc = dpchCache.get(key);
         if (null == dc) {
             dc = searchForDynamicPermissionCheckHelper(p, c);
@@ -533,7 +533,7 @@ public enum  AAA {
         requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
     }
 
-    private static _.T2<Permission, Class> dpchKey(Permission p, Class c) {
-        return _.T2(p, c);
+    private static $.T2<Permission, Class> dpchKey(Permission p, Class c) {
+        return $.T2(p, c);
     }
 }

@@ -1,6 +1,6 @@
 package org.osgl.aaa.util;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.cache.CacheService;
 import org.osgl.cache.CacheServiceProvider;
 import org.osgl.util.Crypto;
@@ -110,7 +110,7 @@ public class Token implements Serializable {
 
     @Override
     public int hashCode() {
-        return _.hc(oid, due, payload);
+        return $.hc(oid, due, payload);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class Token implements Serializable {
         if (obj == this) return true;
         if (obj instanceof Token) {
             Token that = (Token)obj;
-            return S.eq(that.oid, this.oid) && that.due == this.due && _.eq(that.payload, this.payload);
+            return S.eq(that.oid, this.oid) && that.due == this.due && $.eq(that.payload, this.payload);
         }
 
         return false;

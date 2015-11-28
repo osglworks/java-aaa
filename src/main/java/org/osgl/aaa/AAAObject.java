@@ -1,6 +1,6 @@
 package org.osgl.aaa;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.util.S;
 
@@ -56,8 +56,8 @@ public interface AAAObject {
     String getProperty(String key);
 
     public static abstract class F {
-        public static <T extends AAAObject> _.Predicate<T> nameMatcher(final String name) {
-            return new _.Predicate<T>() {
+        public static <T extends AAAObject> $.Predicate<T> nameMatcher(final String name) {
+            return new $.Predicate<T>() {
                 @Override
                 public boolean test(T aaaObject) {
                     return S.eq(name, aaaObject.getName());
@@ -65,25 +65,25 @@ public interface AAAObject {
             };
         }
 
-        public static <T extends AAAObject> _.Visitor<T> nameVisitor(final _.Function<String, ?> visitor) {
-            return new _.Visitor<T>() {
+        public static <T extends AAAObject> $.Visitor<T> nameVisitor(final $.Function<String, ?> visitor) {
+            return new $.Visitor<T>() {
                 @Override
-                public void visit(T t) throws _.Break {
+                public void visit(T t) throws $.Break {
                     visitor.apply(t.getName());
                     return;
                 }
             };
         }
 
-        public static _.F1<AAAObject, String> NAME_FETCHER = new _.F1<AAAObject, String>() {
+        public static $.F1<AAAObject, String> NAME_FETCHER = new $.F1<AAAObject, String>() {
             @Override
-            public String apply(AAAObject aaaObject) throws NotAppliedException, _.Break {
+            public String apply(AAAObject aaaObject) throws NotAppliedException, $.Break {
                 return aaaObject.getName();
             }
         };
 
-        public static <T extends AAAObject> _.F1<T, String> nameFetcher() {
-            return (_.F1<T, String>)NAME_FETCHER;
+        public static <T extends AAAObject> $.F1<T, String> nameFetcher() {
+            return ($.F1<T, String>)NAME_FETCHER;
         }
     }
 }

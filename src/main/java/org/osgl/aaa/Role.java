@@ -1,6 +1,6 @@
 package org.osgl.aaa;
 
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.util.C;
 
@@ -40,17 +40,17 @@ public interface Role extends AAAObject {
 
     public static abstract class F extends AAAObject.F {
 
-        public static _.F1<Role, C.List<Permission>> PERMISSION_GETTER = new _.F1<Role, C.List<Permission>>() {
+        public static $.F1<Role, C.List<Permission>> PERMISSION_GETTER = new $.F1<Role, C.List<Permission>>() {
             @Override
-            public C.List<Permission> apply(Role role) throws NotAppliedException, _.Break {
+            public C.List<Permission> apply(Role role) throws NotAppliedException, $.Break {
                 return C.list(role.getPermissions());
             }
         };
 
-        public static _.Visitor<Role> permissionVisitor(final _.Function<Permission, ?> visitor) {
-            return new _.Visitor<Role>() {
+        public static $.Visitor<Role> permissionVisitor(final $.Function<Permission, ?> visitor) {
+            return new $.Visitor<Role>() {
                 @Override
-                public void visit(Role role) throws _.Break {
+                public void visit(Role role) throws $.Break {
                     C.list(role.getPermissions()).accept(visitor);
                 }
             };
