@@ -1,5 +1,6 @@
 package org.osgl.aaa.impl;
 
+import org.osgl.$;
 import org.osgl.aaa.*;
 
 /**
@@ -12,17 +13,20 @@ public class SimpleAAAContext extends AAAContextBase {
     private AuthenticationService authen;
     private AuthorizationService author;
     private AAAPersistentService db;
+    private Auditor auditor;
 
     public SimpleAAAContext(AuthenticationService authenticationService,
         AuthorizationService authorizationService,
         AAAPersistentService aaaPersistentService,
+        Auditor auditorImpl,
         int superUserLevel,
         Principal system,
         boolean allowSystem
     ) {
-        authen = authenticationService;
-        author = authorizationService;
-        db = aaaPersistentService;
+        authen = $.NPE(authenticationService);
+        author = $.NPE(authorizationService);
+        db = $.NPE(aaaPersistentService);
+        auditor = null == auditorImpl ? DumbAuditor.INSTANCE : auditorImpl;
         this.superUserLevel = superUserLevel;
         this.allowSystem = allowSystem;
         if (allowSystem) {
@@ -34,9 +38,16 @@ public class SimpleAAAContext extends AAAContextBase {
             AuthorizationService authorizationService,
             AAAPersistentService aaaPersistentService
     ) {
-        this(authenticationService, authorizationService, aaaPersistentService, AAA.SUPER_USER, null, true);
+        this(authenticationService, authorizationService, aaaPersistentService, DumbAuditor.INSTANCE, AAA.SUPER_USER, null, true);
     }
 
+    public SimpleAAAContext(AuthenticationService authenticationService,
+                            AuthorizationService authorizationService,
+                            AAAPersistentService aaaPersistentService,
+                            Auditor auditor
+    ) {
+        this(authenticationService, authorizationService, aaaPersistentService, auditor, AAA.SUPER_USER, null, true);
+    }
 
     @Override
     public AuthenticationService getAuthenticationService() {
@@ -51,6 +62,11 @@ public class SimpleAAAContext extends AAAContextBase {
     @Override
     public AAAPersistentService getPersistentService() {
         return db;
+    }
+
+    @Override
+    public Auditor getAuditor() {
+        return auditor;
     }
 
     @Override

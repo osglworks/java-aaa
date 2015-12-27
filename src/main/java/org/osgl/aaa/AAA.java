@@ -1,12 +1,13 @@
 package org.osgl.aaa;
 
 import org.osgl.$;
+import org.osgl.logging.LogManager;
+import org.osgl.logging.Logger;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.S;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ import java.util.Map;
  */
 public enum  AAA {
     ;
+
+    public static final Logger logger = LogManager.get(AAA.class);
 
     /**
      * The recommended name of system principal
@@ -26,8 +29,6 @@ public enum  AAA {
      */
     public static final int SUPER_USER = 9999;
 
-    private static final ThreadLocal<Object> target = new ThreadLocal<Object>();
-
     private static final Map<$.T2<Permission, Class>, DynamicPermissionCheckHelper> dynamicCheckers = C.newMap();
 
     private static final ThreadLocal<AAAContext> context = new ThreadLocal<AAAContext>();
@@ -35,33 +36,17 @@ public enum  AAA {
     private static final Permission NULL_PERMISSION = null;
 
     /**
-     * Store a guarded resource to the thread local
-     *
-     * @param tgt the object to be guarded
-     */
-    public static void setTarget(Object tgt) {
-        target.set(tgt);
-    }
-
-    private static Object target() {
-        return target.get();
-    }
-
-    /**
-     * Clear the guarded resource from the thread local
-     */
-    public static void clearTarget() {
-        target.remove();
-    }
-
-    /**
      * Set AAAContext to thread local
      *
-     * @param context
+     * @param context the context to be set to ThreadLocal
      */
+    @SuppressWarnings("unused")
     public static void setContext(AAAContext context) {
-        if (null == context) AAA.context.remove();
-        else AAA.context.set(context);
+        if (null == context) {
+            clearContext();
+        } else {
+            AAA.context.set(context);
+        }
     }
 
     /**
@@ -73,16 +58,15 @@ public enum  AAA {
         AAA.context.remove();
     }
 
+    /**
+     * Return the {@link AAAContext context} from the current thread local
+     * @return the context
+     */
     public static AAAContext context() {
         return context.get();
     }
 
-    public static Principal currentPrincipal() {
-        AAAContext ctx = context();
-        if (null == ctx) return null;
-        return ctx.getCurrentPrincipal();
-    }
-
+    @SuppressWarnings("unused")
     public static <T> void registerDynamicPermissionChecker(DynamicPermissionCheckHelper<T> checker, Class<T> clz) {
         List<? extends Permission> l = checker.permissions();
         if (l.isEmpty()) {
@@ -97,11 +81,12 @@ public enum  AAA {
     /**
      * Check if a user has access to a guarded resource
      *
-     * @param user
-     * @param guarded
-     * @param context
+     * @param user the principal
+     * @param guarded the guarded object
+     * @param context the AAA context
      * @return {@code true} if the user has access to the resource or {@code false} otherwise
      */
+    @SuppressWarnings("unchecked")
     public static boolean hasAccessTo(Principal user, Guarded guarded, AAAContext context) {
         E.NPE(user, guarded, context);
         AuthorizationService auth = context.getAuthorizationService();
@@ -129,23 +114,37 @@ public enum  AAA {
         return dc.isAssociated(o, user);
     }
 
-    private static DynamicPermissionCheckHelper searchDPCHfromInterfaces(Permission p, Class<?> c) {
-        DynamicPermissionCheckHelper dc = dynamicCheckers.get(dpchKey(p, c));
-        if (null != dc) return dc;
-        Class[] intfs = c.getInterfaces();
-        C.List<Class> cl = C.listOf(intfs);
-        for (Class c0: cl) {
-            dc = dynamicCheckers.get(dpchKey(p, c0));
-            if (null != dc) return dc;
-        }
-        if (null != p) {
-            // try the global dynamic permission check helper
-            return searchDPCHfromInterfaces(null, c);
+    private static DynamicPermissionCheckHelper searchForDynamicPermissionCheckHelper(Permission p, Class<?> c) {
+        DynamicPermissionCheckHelper dc;
+        while (c != Object.class && c != null) {
+            dc = searchDpchFromInterfaces(p, c);
+            if (null != dc) {
+                return dc;
+            }
+            c = c.getSuperclass();
         }
         return null;
     }
 
-    private static Map<Class, DynamicPermissionCheckHelper> dpchCache = new HashMap<Class, DynamicPermissionCheckHelper>();
+    private static DynamicPermissionCheckHelper searchDpchFromInterfaces(Permission p, Class<?> c) {
+        Class[] intfs = c.getInterfaces();
+        C.List<Class> cl = C.listOf(intfs).append(c);
+        for (Class c0: cl) {
+            DynamicPermissionCheckHelper dc = dynamicCheckers.get(dpchKey(p, c0));
+            if (null != dc) {
+                return dc;
+            }
+        }
+        if (NULL_PERMISSION != p) {
+            for (Class c0: cl) {
+                DynamicPermissionCheckHelper dc = dynamicCheckers.get(dpchKey(NULL_PERMISSION, c0));
+                if (null != dc) {
+                    return dc;
+                }
+            }
+        }
+        return null;
+    }
 
     private static final DynamicPermissionCheckHelper NULL_DPCH = new DynamicPermissionCheckHelper() {
         @Override
@@ -161,25 +160,13 @@ public enum  AAA {
 
     private static DynamicPermissionCheckHelper cachedDynamicPermissionCheckHelper(Permission p, Class<?> c) {
         $.T2<Permission, Class> key = dpchKey(p, c);
-        DynamicPermissionCheckHelper dc = dpchCache.get(key);
+        DynamicPermissionCheckHelper dc = dynamicCheckers.get(key);
         if (null == dc) {
             dc = searchForDynamicPermissionCheckHelper(p, c);
             if (null == dc) {
                 dc = NULL_DPCH;
             }
-            dpchCache.put(c, dc);
-        }
-        return dc;
-    }
-
-    private static DynamicPermissionCheckHelper searchForDynamicPermissionCheckHelper(Permission p, Class<?> c) {
-        DynamicPermissionCheckHelper dc = null;
-        while (c != null) {
-            dc = searchDPCHfromInterfaces(p, c);
-            if (null != dc) {
-                return dc;
-            }
-            c = c.getSuperclass();
+            dynamicCheckers.put(key, dc);
         }
         return dc;
     }
@@ -188,101 +175,272 @@ public enum  AAA {
         throw new NoAccessException();
     }
 
-    private static void noAccess(String reason) {
-        throw new NoAccessException(reason);
-    }
-
-    public static boolean hasPermission(Object target, String permName, boolean allowSystem, AAAContext context) {
-        Principal user = context.getCurrentPrincipal();
-        if (null == user) {
-            if (!allowSystem) noAccess("Cannot find current principal");
-            user = context.getSystemPrincipal();
-        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
-            return true;
-        }
-        AAAPersistentService db = context.getPersistentService();
-        Permission perm = db.findByName(permName, Permission.class);
-        if (null == perm) return false;
-
-        if (null == target) {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        }
-        Object prevTarget = context.getGuardedTarget();
-        context.setGuardedTarget(target);
-        try {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        } finally {
-            context.setGuardedTarget(prevTarget);
-        }
-    }
-
-    public static boolean hasPermission(Object target, String permName, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
-        return hasPermission(target, permName, allowSystem, context);
-    }
-
-    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
-        Principal user = context.getCurrentPrincipal();
-        if (null == user) {
-            if (!allowSystem) noAccess("Cannot find current principal");
-            user = context.getSystemPrincipal();
-        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
-            return true;
-        }
-        Permission perm = permission;
-        if (null == perm) return false;
-
-        if (null == target) {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        }
-        Object prevTarget = context.getGuardedTarget();
-        context.setGuardedTarget(target);
-        try {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        } finally {
-            context.setGuardedTarget(prevTarget);
-        }
-    }
-
-    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
-        return hasPermission(target, permission, allowSystem, context);
-    }
-
-    public static void requirePermission(Permission perm) throws NoAccessException {
-        requirePermission(null, perm, true);
+    /**
+     * Check if the current principal has permission specified on the target object.
+     * <p>
+     * The current principal is get from the current context via
+     * {@link AAAContext#getPrincipal(boolean)} call, while
+     * the current context is get via {@link AAA#context()} call.
+     * </p>
+     *
+     * @param target the guarded object
+     * @param permission the name of the permission required
+     * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in this context
+     * @return {@code true} if the current principal has permission to the target object
+     */
+    @SuppressWarnings("unused")
+    public static boolean hasPermission(Object target, String permission, boolean allowSystem) {
+        return hasPermission(target, permission, allowSystem, context());
     }
 
     /**
-     * Authorize by permission. {@link org.osgl.aaa.AllowSystemAccount system account is allowed}
-     * @param perm the permission name
-     * @throws NoAccessException if the {@link AAAContext#getCurrentPrincipal() current principal}
-     *                           does not have required permission
+     * Check if the current principal has permission specified on the target.
+     * <p>
+     *     The current principal is get from the current context via
+     *     {@link AAAContext#getPrincipal(boolean)} call on the
+     *     {@link AAAContext context} specified
+     * </p>
+     * @param target the guarded target
+     * @param permission the name of the permission required
+     * @param allowSystem specify if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in the context
+     * @param context the {@link AAAContext context}
+     * @return {@code true} if the current principal has the permission
      */
-    public static void requirePermission(String perm) throws NoAccessException {
-        requirePermission(null, perm, true);
+    public static boolean hasPermission(Object target, String permission, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        AAAPersistentService db = context.getPersistentService();
+        Permission perm = db.findByName(permission, Permission.class);
+        return null != perm && hasPermission(target, user, perm, context);
     }
 
-    public static void requirePermission(String perm, AAAContext context) throws NoAccessException {
-        requirePermission(null, perm, true, context);
+    /**
+     * Check if the current principal has permission specified on the target.
+     * <p>
+     *     The current principal is get from the current context via
+     *     {@link AAAContext#getPrincipal(boolean)} call on the
+     *     {@link AAAContext context} specified
+     * </p>
+     * @param target the guarded target
+     * @param permission the permission required
+     * @param allowSystem specify if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in the context
+     * @param context the {@link AAAContext context}
+     * @return {@code true} if the current principal has the permission
+     */
+    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        return hasPermission(target, user, permission, context);
     }
 
-    public static void requirePermission(Permission perm, boolean allowSystem) throws NoAccessException {
-        requirePermission(null, perm, allowSystem);
+    /**
+     * Check if the current principal has permission specified on the target object.
+     * <p>
+     * The current principal is get from the current context via
+     * {@link AAAContext#getPrincipal(boolean)} call, while
+     * the current context is get via {@link AAA#context()} call.
+     * </p>
+     *
+     * @param target the guarded object
+     * @param permission the permission required
+     * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in this context
+     * @return {@code true} if the current principal has permission to the target object
+     */
+    @SuppressWarnings("unused")
+    public static boolean hasPermission(Object target, Permission permission, boolean allowSystem) {
+        return hasPermission(target, permission, allowSystem, context());
     }
 
-    public static void requirePermission(Permission perm, boolean allowSystem, AAAContext context) throws NoAccessException {
-        requirePermission(null, perm, allowSystem, context);
+    /**
+     * Check if the principal specified has permission specified on the target.
+     * <p>
+     *     The current principal is get from the current context via
+     *     {@link AAAContext#getPrincipal(boolean)} call on the
+     *     {@link AAAContext context} specified
+     * </p>
+     * @param target the guarded target
+     * @param user the principal
+     * @param permission the permission required
+     * @param context the {@link AAAContext context}
+     * @return {@code true} if the current principal has the permission
+     */
+    public static boolean hasPermission(Object target, Principal user, Permission permission, AAAContext context) {
+        if (null == user || null == permission || null == context) {
+            return false;
+        }
+        if (context.allowSuperUser() && context.isSuperUser(user)) {
+            return true;
+        }
+        Object prevTarget = null;
+        if (null != target) {
+            prevTarget = context.getGuardedTarget();
+            context.setGuardedTarget(target);
+        }
+        try {
+            return hasAccessTo(user, Guarded.Factory.byPermission(permission), context);
+        } finally {
+            if (null != prevTarget) {
+                context.setGuardedTarget(prevTarget);
+            }
+        }
     }
 
-    public static void requirePermission(String perm, boolean allowSystem) throws NoAccessException {
-        requirePermission(null, perm, allowSystem);
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param permission the permission name
+     * @param permission the permission name
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    @SuppressWarnings("unused")
+    public static void requirePermission(String permission) throws NoAccessException {
+        requirePermission(null, permission, true);
     }
 
-    public static void requirePermission(String perm, boolean allowSystem, AAAContext context) throws NoAccessException {
-        requirePermission(null, perm, allowSystem, context);
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with argument {@code allowSystem} set to {@code allowSystem} specified
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param permission the permission name
+     * @param permission the permission name
+     * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in this context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(String permission, boolean allowSystem) throws NoAccessException {
+        requirePermission(null, permission, allowSystem);
+    }
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param permission the permission name
+     * @param permission the permission name
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(String permission, AAAContext context) throws NoAccessException {
+        requirePermission(null, permission, true, context);
+    }
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param permission the permission name
+     * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in this context
+     * @param context the {@link AAAContext aaa context}
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(String permission, boolean allowSystem, AAAContext context) throws NoAccessException {
+        requirePermission(null, permission, allowSystem, context);
+    }
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * @param permission the permission name
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(Permission permission) throws NoAccessException {
+        requirePermission(null, permission, true);
+    }
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with argument {@code allowSystem} set to specified {@code allowSystem}
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * @param permission the permission name
+     * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in this context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(Permission permission, boolean allowSystem) throws NoAccessException {
+        requirePermission(null, permission, allowSystem);
+    }
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with argument {@code allowSystem} set to specified {@code allowSystem}
+     *     </li>
+     *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
+     * </ul>
+     * @param permission the permission name
+     * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    in this context
+     * @param context the {@link AAAContext aaa context}
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(Permission permission, boolean allowSystem, AAAContext context) throws NoAccessException {
+        requirePermission(null, permission, allowSystem, context);
     }
 
     public static void requirePermission(Object target, Permission perm) throws NoAccessException {
@@ -302,61 +460,62 @@ public enum  AAA {
     }
 
     public static void requirePermission(Object target, Permission permission, boolean allowSystem) {
-        if (!hasPermission(target, permission, allowSystem)) noAccess();
-    }
-
-    public static void requirePermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
-        if (!hasPermission(target, permission, allowSystem, context)) noAccess();
+        requirePermission(target, permission, allowSystem, context());
     }
 
     public static void requirePermission(Object target, String permName, boolean allowSystem) {
-        if (!hasPermission(target, permName, allowSystem)) noAccess();
+        requirePermission(target, permName, allowSystem, context());
+    }
+
+    public static void requirePermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        requirePermission(target,user, permission, context);
     }
 
 
     public static void requirePermission(Object target, String permName, boolean allowSystem, AAAContext context) {
-        if (!hasPermission(target, permName, allowSystem, context)) noAccess();
+        Principal user = context.getPrincipal(allowSystem);
+        Permission perm = context.getPersistentService().findByName(permName, Permission.class);
+        requirePermission(target,user, perm, context);
+    }
+
+    public static void requirePermission(Object target, Principal user, Permission permission, AAAContext context) {
+        Auditor auditor = context.getAuditor();
+        if (!hasPermission(target, user, permission, context)) {
+            auditor.audit(target, user.getName(), permission.getName(), null, false, null);
+            noAccess();
+        } else {
+            auditor.audit(target, user.getName(), permission.getName(), null, true, null);
+        }
+    }
+
+    public static boolean hasPrivilege(Privilege privilege) {
+        return hasPrivilege(privilege, true);
     }
 
     public static boolean hasPrivilege(Privilege privilege, boolean allowSystem, AAAContext context) {
-        Principal user = context.getCurrentPrincipal();
-        if (null == user) {
-            if (!allowSystem) noAccess("Cannot find current principal");
-            user = context.getSystemPrincipal();
-        }
-        Privilege priv = privilege;
-        if (null == priv) return false;
-        AuthorizationService auth = context.getAuthorizationService();
-        Privilege userPriv = auth.getPrivilege(user, context);
-        if (null == userPriv) return false;
-        return userPriv.getLevel() >= priv.getLevel();
+        Principal user = context.getPrincipal(allowSystem);
+        return (null != user) && hasPrivilege(user, privilege, context);
     }
 
     public static boolean hasPrivilege(Privilege privilege, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
-        return hasPrivilege(privilege, allowSystem, context);
+        return hasPrivilege(privilege, allowSystem, context());
     }
 
     public static boolean hasPrivilege(String privName, boolean allowSystem, AAAContext context) {
-        Principal user = context.getCurrentPrincipal();
-        if (null == user) {
-            if (!allowSystem) noAccess("Cannot find current principal");
-            user = context.getSystemPrincipal();
-        }
         AAAPersistentService db = context.getPersistentService();
         Privilege priv = db.findByName(privName, Privilege.class);
-        if (null == priv) return false;
-        AuthorizationService auth = context.getAuthorizationService();
-        Privilege userPriv = auth.getPrivilege(user, context);
-        if (null == userPriv) return false;
-        return userPriv.getLevel() >= priv.getLevel();
+        return null != priv && hasPrivilege(priv, allowSystem, context);
     }
 
     public static boolean hasPrivilege(String privName, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
-        return hasPrivilege(privName, allowSystem, context);
+        return hasPrivilege(privName, allowSystem, context());
+    }
+
+    public static boolean hasPrivilege(Principal user, Privilege privilege, AAAContext context) {
+        AuthorizationService auth = context.getAuthorizationService();
+        Privilege userPrivilege = auth.getPrivilege(user, context);
+        return null != userPrivilege && userPrivilege.getLevel() >= privilege.getLevel();
     }
 
     public static void requirePrivilege(Privilege privilege) {
@@ -391,98 +550,65 @@ public enum  AAA {
         if (!hasPrivilege(privName, allowSystem, ctx)) noAccess();
     }
 
-    private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem, AAAContext context) {
-        Principal user = context.getCurrentPrincipal();
-        if (null == user) {
-            if (!allowSystem) noAccess("Cannot find current principal");
-            user = context.getSystemPrincipal();
-        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
-            return true;
-        }
-        Privilege priv = privilege;
-        AuthorizationService auth = context.getAuthorizationService();
-        if (null != priv) {
-            Privilege userPriv = auth.getPrivilege(user, context);
-            if (null != userPriv && userPriv.getLevel() >= priv.getLevel()) {
-                return true;
-            }
-        }
+    public static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
+        return hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context());
+    }
 
-        Permission perm = permission;
-        if (null == perm) {
+    public static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
+        return hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context());
+    }
+
+    public static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        return null != user && hasPermissionOrPrivilege(target, user, permission, privilege, context);
+    }
+
+    public static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        return null != user && hasPermissionOrPrivilege(target, user, permission, privilege, context);
+    }
+
+    public static boolean hasPermissionOrPrivilege(Object target, Principal user, String permission, String privilege, AAAContext context) {
+        E.illegalArgumentIf(null == permission && null == privilege);
+        E.illegalArgumentIf(null == user);
+        AAAPersistentService persistentService = context.getPersistentService();
+        Permission perm = null != permission ? persistentService.findByName(permission, Permission.class) : null;
+        Privilege priv = null != privilege ? persistentService.findByName(privilege, Privilege.class) : null;
+        if (null == perm && null != permission) {
+            logger.warn("Unknown permission %s", permission);
+        }
+        if (null == priv && null != privilege) {
+            logger.warn("Unknown privilege %s", privilege);
+        }
+        return (null != perm || null != priv) && hasPermissionOrPrivilege(target, user, perm, priv, context);
+    }
+
+    public static boolean hasPermissionOrPrivilege(Object target, Principal user, Permission permission, Privilege privilege, AAAContext context) {
+        E.illegalArgumentIf(null == permission && null == privilege);
+        if (null == user) {
             return false;
         }
-
-        if (null == target) {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        }
-        Object prevTarget = context.getGuardedTarget();
-        context.setGuardedTarget(target);
-        try {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        } finally {
-            context.setGuardedTarget(prevTarget);
-        }
-    }
-
-    private static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
-        return hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context);
-    }
-
-    private static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem, AAAContext context) {
-        Principal user = context.getCurrentPrincipal();
-        if (null == user) {
-            if (!allowSystem) noAccess("Cannot find current principal");
-            user = context.getSystemPrincipal();
-        } else if (context.allowSuperUser() && context.isSuperUser(user)) {
-            return true;
-        }
-        AAAPersistentService db = context.getPersistentService();
-        Privilege priv = db.findByName(privilege, Privilege.class);
-        AuthorizationService auth = context.getAuthorizationService();
-        if (null != priv) {
-            Privilege userPriv = auth.getPrivilege(user, context);
-            if (userPriv.getLevel() >= priv.getLevel()) return true;
-        }
-        Permission perm = db.findByName(permission, Permission.class);
-        if (null == perm) {
-            return false;
-        }
-
-        if (null == target) {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        }
-        Object prevTarget = context.getGuardedTarget();
-        context.setGuardedTarget(target);
-        try {
-            return hasAccessTo(user, Guarded.Factory.byPermission(perm), context);
-        } finally {
-            context.setGuardedTarget(prevTarget);
-        }
-    }
-
-    private static boolean hasPermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
-        AAAContext context = context();
-        if (null == context) noAccess("AAA context not found");
-        return hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context);
-    }
-
-    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
-        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem)) noAccess();
-    }
-
-    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem, AAAContext context) {
-        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem, context)) noAccess();
+        boolean retVal = null != privilege && hasPrivilege(user, privilege, context);
+        return retVal || (null != permission && hasPermission(target, user, permission, context));
     }
 
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem) {
-        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem)) noAccess();
+        requirePermissionOrPrivilege(target, permission, privilege, allowSystem, context());
     }
 
-    public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem, AAAContext ctx) {
-        if (!hasPermissionOrPrivilege(target, permission, privilege, allowSystem, ctx)) noAccess();
+    public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        requirePermissionOrPrivilege(target, user, permission, privilege, context);
+    }
+
+    public static void requirePermissionOrPrivilege(Object target, Principal user, String permission, String privilege, AAAContext ctx) {
+        Auditor auditor = ctx.getAuditor();
+        if (!hasPermissionOrPrivilege(target, user, permission, privilege, ctx)) {
+            auditor.audit(target, user.getName(), permission, privilege, false, "");
+            noAccess();
+        } else {
+            auditor.audit(target, user.getName(), permission, privilege, true, "");
+        }
     }
 
     public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege) {
@@ -501,28 +627,12 @@ public enum  AAA {
         requirePermissionOrPrivilege(null, permission, privilege, true, ctx);
     }
 
-    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege) {
-        requirePermissionOrPrivilege(target, permission, privilege, true);
-    }
-
-    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, AAAContext ctx) {
-        requirePermissionOrPrivilege(target, permission, privilege, true, ctx);
-    }
-
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege) {
         requirePermissionOrPrivilege(target, permission, privilege, true);
     }
 
     public static void requirePermissionOrPrivilege(Object target, String permission, String privilege, AAAContext ctx) {
         requirePermissionOrPrivilege(target, permission, privilege, true, ctx);
-    }
-
-    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem) {
-        requirePermissionOrPrivilege(null, permission, privilege, allowSystem);
-    }
-
-    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem, AAAContext ctx) {
-        requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
     }
 
     public static void requirePermissionOrPrivilege(String permission, String privilege, boolean allowSystem) {
@@ -533,7 +643,48 @@ public enum  AAA {
         requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
     }
 
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege) {
+        requirePermissionOrPrivilege(target, permission, privilege, true);
+    }
+
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, AAAContext ctx) {
+        requirePermissionOrPrivilege(target, permission, privilege, true, ctx);
+    }
+
+    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem) {
+        requirePermissionOrPrivilege(null, permission, privilege, allowSystem);
+    }
+
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
+        requirePermissionOrPrivilege(target, permission, privilege, allowSystem, context());
+    }
+
+    public static void requirePermissionOrPrivilege(Permission permission, Privilege privilege, boolean allowSystem, AAAContext ctx) {
+        requirePermissionOrPrivilege(null, permission, privilege, allowSystem, ctx);
+    }
+
+    public static void requirePermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem, AAAContext context) {
+        Principal user = context.getPrincipal(allowSystem);
+        requirePermissionOrPrivilege(target, user, permission, privilege, context);
+    }
+
+    public static void requirePermissionOrPrivilege(Object target,
+                                                    Principal user,
+                                                    Permission permission,
+                                                    Privilege privilege,
+                                                    AAAContext context
+    ) {
+        Auditor auditor = context.getAuditor();
+        if (!hasPermissionOrPrivilege(target, user, permission, privilege, context)) {
+            auditor.audit(target, user.getName(), permission.getName(), privilege.getName(), false, "");
+            noAccess();
+        } else {
+            auditor.audit(target, user.getName(), permission.getName(), privilege.getName(), true, "");
+        }
+    }
+
     private static $.T2<Permission, Class> dpchKey(Permission p, Class c) {
         return $.T2(p, c);
     }
+
 }
