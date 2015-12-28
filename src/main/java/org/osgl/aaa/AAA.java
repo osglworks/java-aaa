@@ -302,7 +302,6 @@ public enum  AAA {
      * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
-     * @param permission the permission name
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
@@ -326,12 +325,12 @@ public enum  AAA {
      * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
-     * @param permission the permission name
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
+    @SuppressWarnings("unused")
     public static void requirePermission(String permission, boolean allowSystem) throws NoAccessException {
         requirePermission(null, permission, allowSystem);
     }
@@ -350,10 +349,10 @@ public enum  AAA {
      * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
-     * @param permission the permission name
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
+    @SuppressWarnings("unused")
     public static void requirePermission(String permission, AAAContext context) throws NoAccessException {
         requirePermission(null, permission, true, context);
     }
@@ -378,6 +377,7 @@ public enum  AAA {
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
+    @SuppressWarnings("unused")
     public static void requirePermission(String permission, boolean allowSystem, AAAContext context) throws NoAccessException {
         requirePermission(null, permission, allowSystem, context);
     }
@@ -393,10 +393,14 @@ public enum  AAA {
      *     </li>
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
+    @SuppressWarnings("unused")
     public static void requirePermission(Permission permission) throws NoAccessException {
         requirePermission(null, permission, true);
     }
@@ -412,12 +416,16 @@ public enum  AAA {
      *     </li>
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
-     * @param permission the permission name
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param permission the permission
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
+    @SuppressWarnings("unused")
     public static void requirePermission(Permission permission, boolean allowSystem) throws NoAccessException {
         requirePermission(null, permission, allowSystem);
     }
@@ -432,53 +440,225 @@ public enum  AAA {
      *     </li>
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
-     * @param permission the permission name
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param permission the permission
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
      * @param context the {@link AAAContext aaa context}
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
+    @SuppressWarnings("unused")
     public static void requirePermission(Permission permission, boolean allowSystem, AAAContext context) throws NoAccessException {
         requirePermission(null, permission, allowSystem, context);
     }
 
-    public static void requirePermission(Object target, Permission perm) throws NoAccessException {
-        requirePermission(target, perm, true);
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    @SuppressWarnings("unused")
+    public static void requirePermission(Object target, Permission permission) throws NoAccessException {
+        requirePermission(target, permission, true);
     }
 
-    public static void requirePermission(Object target, Permission perm, AAAContext context) throws NoAccessException {
-        requirePermission(target, perm, true, context);
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission
+     * @param context the AAA context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    @SuppressWarnings("unused")
+    public static void requirePermission(Object target, Permission permission, AAAContext context) throws NoAccessException {
+        requirePermission(target, permission, true, context);
     }
 
-    public static void requirePermission(Object target, String perm) throws NoAccessException {
-        requirePermission(target, perm, true);
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission name
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    @SuppressWarnings("unused")
+    public static void requirePermission(Object target, String permission) throws NoAccessException {
+        requirePermission(target, permission, true);
     }
 
-    public static void requirePermission(Object target, String perm, AAAContext context) throws NoAccessException {
-        requirePermission(target, perm, true, context);
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} set to {@code true}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission name
+     * @param context the AAA context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(Object target, String permission, AAAContext context) throws NoAccessException {
+        requirePermission(target, permission, true, context);
     }
 
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} argument set to specified {@code allowSystem}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission
+     * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    to access the resource
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
     public static void requirePermission(Object target, Permission permission, boolean allowSystem) {
         requirePermission(target, permission, allowSystem, context());
     }
 
-    public static void requirePermission(Object target, String permName, boolean allowSystem) {
-        requirePermission(target, permName, allowSystem, context());
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>{@link AAAContext context} - established via {@link AAA#context()} call</li>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} argument set to specified {@code allowSystem}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission name
+     * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    to access the resource
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(Object target, String permission, boolean allowSystem) {
+        requirePermission(target, permission, allowSystem, context());
     }
 
+
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} argument set to specified {@code allowSystem}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission
+     * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    to access the resource
+     * @param context the AAA Context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
     public static void requirePermission(Object target, Permission permission, boolean allowSystem, AAAContext context) {
         Principal user = context.getPrincipal(allowSystem);
         requirePermission(target,user, permission, context);
     }
 
-
-    public static void requirePermission(Object target, String permName, boolean allowSystem, AAAContext context) {
+    /**
+     * Authorize by permission.
+     * <p>This method call has implied a set of implicit objects:</p>
+     * <ul>
+     *     <li>
+     *         {@link Principal principal} - established via {@link AAAContext#getPrincipal(boolean)}
+     *         call with {@code allowSystem} argument set to specified {@code allowSystem}
+     *     </li>
+     * </ul>
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param permission the permission name
+     * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
+     *                    to access the resource
+     * @param context the AAA Context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
+    public static void requirePermission(Object target, String permission, boolean allowSystem, AAAContext context) {
         Principal user = context.getPrincipal(allowSystem);
-        Permission perm = context.getPersistentService().findByName(permName, Permission.class);
+        Permission perm = context.getPersistentService().findByName(permission, Permission.class);
         requirePermission(target,user, perm, context);
     }
 
+    /**
+     * Authorize by permission.
+     * This method will audit the success or failure of the authorizing by calling
+     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * the auditor is retrieved from {@link AAAContext#getAuditor()}
+     * @param target the guarded object
+     * @param user the principal
+     * @param permission the permission
+     * @param context the AAA Context
+     * @throws NoAccessException if the principal does not have permission specified on
+     *         the target object
+     */
     public static void requirePermission(Object target, Principal user, Permission permission, AAAContext context) {
         Auditor auditor = context.getAuditor();
         if (!hasPermission(target, user, permission, context)) {
