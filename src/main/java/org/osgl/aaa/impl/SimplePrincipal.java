@@ -32,10 +32,10 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
     /**
      * Construct a principal by name, privilege, list of roles and list of permissions
      *
-     * @param name
-     * @param privilege
-     * @param roles
-     * @param perms
+     * @param name the name of the principal
+     * @param privilege the privilege
+     * @param roles a collection of roles
+     * @param perms a collection of permissions
      */
     public SimplePrincipal(String name, Privilege privilege, Collection<? extends Role> roles, Collection<? extends Permission> perms) {
         super(name);

@@ -1,6 +1,8 @@
 package org.osgl.aaa;
 
 import org.osgl.$;
+import org.osgl.aaa.impl.SimplePrincipal;
+import org.osgl.aaa.impl.SimplePrivilege;
 import org.osgl.logging.LogManager;
 import org.osgl.logging.Logger;
 import org.osgl.util.C;
@@ -715,19 +717,33 @@ public enum  AAA {
     }
 
     public static void requirePrivilege(Privilege privilege, boolean allowSystem) {
-        if (!hasPrivilege(privilege, allowSystem)) noAccess();
+        requirePrivilege(privilege, allowSystem, context());
     }
 
     public static void requirePrivilege(Privilege privilege, boolean allowSystem, AAAContext ctx) {
-        if (!hasPrivilege(privilege, allowSystem, ctx)) noAccess();
+        Principal user = ctx.getPrincipal(allowSystem);
+        requirePrivilege(user, privilege, ctx);
     }
 
-    public static void requirePrivilege(String privName, boolean allowSystem) {
-        if (!hasPrivilege(privName, allowSystem)) noAccess();
+    public static void requirePrivilege(String privilege, boolean allowSystem) {
+        requirePrivilege(privilege, allowSystem, context());
     }
 
-    public static void requirePrivilege(String privName, boolean allowSystem, AAAContext ctx) {
-        if (!hasPrivilege(privName, allowSystem, ctx)) noAccess();
+    public static void requirePrivilege(String privilege, boolean allowSystem, AAAContext ctx) {
+        AAAPersistentService db = ctx.getPersistentService();
+        Privilege p = db.findByName(privilege, Privilege.class);
+        Principal user = ctx.getPrincipal(allowSystem);
+        requirePrivilege(user, p, ctx);
+    }
+
+    public static void requirePrivilege(Principal user, Privilege privilege, AAAContext context) {
+        Auditor auditor = context.getAuditor();
+        if (!hasPrivilege(user, privilege, context)) {
+            auditor.audit(null, user.getName(), null, privilege.getName(), false, "");
+            noAccess();
+        } else {
+            auditor.audit(null, user.getName(), null, privilege.getName(), true, "");
+        }
     }
 
     public static boolean hasPermissionOrPrivilege(Object target, Permission permission, Privilege privilege, boolean allowSystem) {
@@ -861,6 +877,14 @@ public enum  AAA {
         } else {
             auditor.audit(target, user.getName(), permission.getName(), privilege.getName(), true, "");
         }
+    }
+
+    /**
+     * Create a default super user with {@link #SUPER_USER} privilege
+     * @return a principal with {@link #SUPER_USER} privilege
+     */
+    public static Principal createSuperUser() {
+        return new SimplePrincipal.Builder("su").grantPrivilege(new SimplePrivilege("root", SUPER_USER)).toPrincipal();
     }
 
     private static $.T2<Permission, Class> dpchKey(Permission p, Class c) {
