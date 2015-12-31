@@ -41,11 +41,19 @@ public interface AAAObject {
 
     /**
      * Set property value to the {@code AAAObject}.
+     * <p>Note if the value is {@code null} then the
+     * property will be removed from the object</p>
      *
      * @param key the property key
      * @param value the property value
      */
     void setProperty(String key, String value);
+
+    /**
+     * Remove specified property from the {@code AAAObject}
+     * @param key the property key
+     */
+    void unsetProperty(String key);
 
     /**
      * Return property value of the {@code AAAObject}

@@ -70,8 +70,16 @@ public class AAAObjectBase implements AAAObject {
 
     @Override
     public void setProperty(String key, String value) {
+        if (null == value) {
+            props.remove(key);
+        }
         props.put(key, value);
         return;
+    }
+
+    @Override
+    public void unsetProperty(String key) {
+        props.remove(key);
     }
 
     @Override
