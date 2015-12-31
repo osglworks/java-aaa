@@ -880,11 +880,19 @@ public enum  AAA {
     }
 
     /**
-     * Create a default super user with {@link #SUPER_USER} privilege
-     * @return a principal with {@link #SUPER_USER} privilege
+     * Create a default super user principal with name "{@code su}"
+     * @return a principal as described above
      */
     public static Principal createSuperUser() {
-        return new SimplePrincipal.Builder("su").grantPrivilege(new SimplePrivilege("root", SUPER_USER)).toPrincipal();
+        return createSuperUser("su");
+    }
+
+    /**
+     * Create a super user principal with name specified. The super user will have the {@link #SUPER_USER} privilege
+     * @return a principal as described above
+     */
+    public static Principal createSuperUser(String userName) {
+        return new SimplePrincipal.Builder(userName).grantPrivilege(new SimplePrivilege("root", SUPER_USER)).toPrincipal();
     }
 
     private static $.T2<Permission, Class> dpchKey(Permission p, Class c) {
