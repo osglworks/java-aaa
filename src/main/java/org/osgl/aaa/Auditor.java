@@ -29,6 +29,6 @@ public interface Auditor {
          * Returns a string that can identify the audit target in the log
          * @return a string that represent the audit target
          */
-        String getAuditTag();
+        String auditTag();
     }
 }
