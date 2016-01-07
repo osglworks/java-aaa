@@ -4,6 +4,8 @@ import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.util.S;
 
+import java.util.Set;
+
 /**
  * Defines the common properties of AAA objects including
  */
@@ -62,6 +64,12 @@ public interface AAAObject {
      * @return the property value
      */
     String getProperty(String key);
+
+    /**
+     * Return a set contains the {@link #getProperty(String) property} keys
+     * @return a set of strings as described
+     */
+    Set<String> propertyKeys();
 
     public static abstract class F {
         public static <T extends AAAObject> $.Predicate<T> nameMatcher(final String name) {

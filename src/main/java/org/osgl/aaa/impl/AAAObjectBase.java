@@ -6,6 +6,7 @@ import org.osgl.util.C;
 import org.osgl.util.S;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides a base AAAObject implementation
@@ -87,4 +88,8 @@ public class AAAObjectBase implements AAAObject {
         return props.get(key);
     }
 
+    @Override
+    public Set<String> propertyKeys() {
+        return props.keySet();
+    }
 }
