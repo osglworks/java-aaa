@@ -1,6 +1,7 @@
 package org.osgl.aaa.impl;
 
 import org.osgl.aaa.Auditor;
+import org.osgl.aaa.Principal;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ public class DumbAuditor implements Auditor, Serializable {
     public static final Auditor INSTANCE = new DumbAuditor();
 
     @Override
-    public void audit(Object target, String principal, String permission, String privilege, boolean success, String message) {
+    public void audit(Object target, Principal principal, String permission, String privilege, boolean success, String message) {
         // do nothing
     }
 

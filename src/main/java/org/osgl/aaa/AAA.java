@@ -301,7 +301,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
      * @throws NoAccessException if the principal does not have permission specified on
@@ -324,7 +324,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
@@ -348,7 +348,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
      * @throws NoAccessException if the principal does not have permission specified on
@@ -370,7 +370,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
@@ -396,7 +396,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
      * @throws NoAccessException if the principal does not have permission specified on
@@ -419,7 +419,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
@@ -443,7 +443,7 @@ public enum  AAA {
      *     <li>Guarded object - established via {@link AAAContext#getGuardedTarget()} call</li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
@@ -468,7 +468,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission
@@ -490,7 +490,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission
@@ -514,7 +514,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission name
@@ -536,7 +536,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission name
@@ -559,7 +559,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission
@@ -584,7 +584,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission name
@@ -608,7 +608,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission
@@ -633,7 +633,7 @@ public enum  AAA {
      *     </li>
      * </ul>
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param permission the permission name
@@ -652,7 +652,7 @@ public enum  AAA {
     /**
      * Authorize by permission.
      * This method will audit the success or failure of the authorizing by calling
-     * {@link Auditor#audit(Object, String, String, String, boolean, String)}, where
+     * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param target the guarded object
      * @param user the principal
@@ -664,10 +664,10 @@ public enum  AAA {
     public static void requirePermission(Object target, Principal user, Permission permission, AAAContext context) {
         Auditor auditor = context.getAuditor();
         if (!hasPermission(target, user, permission, context)) {
-            auditor.audit(target, user.getName(), permission.getName(), null, false, null);
+            auditor.audit(target, user, permission.getName(), null, false, null);
             noAccess();
         } else {
-            auditor.audit(target, user.getName(), permission.getName(), null, true, null);
+            auditor.audit(target, user, permission.getName(), null, true, null);
         }
     }
 
@@ -739,10 +739,10 @@ public enum  AAA {
     public static void requirePrivilege(Principal user, Privilege privilege, AAAContext context) {
         Auditor auditor = context.getAuditor();
         if (!hasPrivilege(user, privilege, context)) {
-            auditor.audit(null, user.getName(), null, privilege.getName(), false, "");
+            auditor.audit(null, user, null, privilege.getName(), false, "");
             noAccess();
         } else {
-            auditor.audit(null, user.getName(), null, privilege.getName(), true, "");
+            auditor.audit(null, user, null, privilege.getName(), true, "");
         }
     }
 
@@ -800,10 +800,10 @@ public enum  AAA {
     public static void requirePermissionOrPrivilege(Object target, Principal user, String permission, String privilege, AAAContext ctx) {
         Auditor auditor = ctx.getAuditor();
         if (!hasPermissionOrPrivilege(target, user, permission, privilege, ctx)) {
-            auditor.audit(target, user.getName(), permission, privilege, false, "");
+            auditor.audit(target, user, permission, privilege, false, "");
             noAccess();
         } else {
-            auditor.audit(target, user.getName(), permission, privilege, true, "");
+            auditor.audit(target, user, permission, privilege, true, "");
         }
     }
 
@@ -872,10 +872,10 @@ public enum  AAA {
     ) {
         Auditor auditor = context.getAuditor();
         if (!hasPermissionOrPrivilege(target, user, permission, privilege, context)) {
-            auditor.audit(target, user.getName(), permission.getName(), privilege.getName(), false, "");
+            auditor.audit(target, user, permission.getName(), privilege.getName(), false, "");
             noAccess();
         } else {
-            auditor.audit(target, user.getName(), permission.getName(), privilege.getName(), true, "");
+            auditor.audit(target, user, permission.getName(), privilege.getName(), true, "");
         }
     }
 
