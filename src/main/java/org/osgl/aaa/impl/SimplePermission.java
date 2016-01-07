@@ -1,7 +1,11 @@
 package org.osgl.aaa.impl;
 
+import org.osgl.aaa.AAAObject;
 import org.osgl.aaa.Permission;
+import org.osgl.aaa.Role;
 import org.osgl.util.C;
+import org.osgl.util.E;
+import org.osgl.util.S;
 
 import java.util.Collection;
 import java.util.Set;
@@ -43,4 +47,36 @@ public class SimplePermission extends AAAObjectBase implements Permission {
     public Set<Permission> implied() {
         return C.set(implied);
     }
+
+    public static class Builder {
+        protected String name;
+        protected boolean dynamic;
+        protected C.List<Permission> implied = C.newList();
+        public Builder(String name) {
+            E.illegalArgumentIf(S.blank(name));
+            this.name = name;
+        }
+        public Builder dynamic(boolean dynamic) {
+            this.dynamic = dynamic;
+            return this;
+        }
+        public Builder addImplied(Permission perm) {
+            E.NPE(perm);
+            if (!implied.contains(perm)) implied.add(perm);
+            return this;
+        }
+        public Builder removeImplied(final String permName) {
+            E.NPE(permName);
+            implied = implied.remove(AAAObject.F.nameMatcher(permName));
+            return this;
+        }
+        public Builder removeAllImplied() {
+            implied.clear();
+            return this;
+        }
+        public Permission toPermission() {
+            return new SimplePermission(name, implied, dynamic);
+        }
+    }
+
 }
