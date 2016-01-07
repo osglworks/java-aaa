@@ -4,6 +4,7 @@ import org.osgl.aaa.*;
 import org.osgl.util.C;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * A simple authorization service implementation
@@ -33,6 +34,11 @@ public class SimpleAuthorizationService implements AuthorizationService {
     public Collection<Permission> getAllPermissions(Principal principal, AAAContext context) {
         C.List<Permission> perms = C.newList(getPermissions(principal, context)).lazy();
         C.list(getRoles(principal, context)).accept(Role.F.PERMISSION_GETTER.andThen(C.F.addAllTo(perms)));
-        return perms;
+        Set<Permission> retVal = C.newSet();
+        for (Permission p : perms) {
+            retVal.add(p);
+            retVal.addAll(p.implied());
+        }
+        return retVal;
     }
 }

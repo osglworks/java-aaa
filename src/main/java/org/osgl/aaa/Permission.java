@@ -3,6 +3,8 @@ package org.osgl.aaa;
 import org.osgl.$;
 import org.osgl.exception.NotAppliedException;
 
+import java.util.Set;
+
 /**
  * This interface represents a permission, such as that used to grant
  * a particular type of access to a resource.
@@ -17,6 +19,18 @@ public interface Permission extends AAAObject, java.security.acl.Permission {
      * @return true if this right is dynamic, false otherwise
      */
     boolean isDynamic();
+
+    /**
+     * Return permissions that are implied by this permission.
+     * <p>
+     *     If a principal has been granted {@code this} permission then
+     *     he/she automatically persist the {@code implied} permissions
+     *     of this permission
+     * </p>
+     * @return a set of implied permissions or an empty set if there is
+     *         no implied permission on this permission
+     */
+    Set<Permission> implied();
 
     public static abstract class F extends AAAObject.F {
 
