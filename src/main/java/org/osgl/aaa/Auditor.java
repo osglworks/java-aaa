@@ -19,4 +19,16 @@ public interface Auditor {
      * @param message    any additional message
      */
     void audit(Object target, String principal, String permission, String privilege, boolean success, String message);
+
+    /**
+     * It is recommended that the object which can be a {@code target} of auditing
+     * to implement this interface
+     */
+    public interface Target {
+        /**
+         * Returns a string that can identify the audit target in the log
+         * @return a string that represent the audit target
+         */
+        String getAuditTag();
+    }
 }
