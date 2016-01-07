@@ -31,7 +31,7 @@ public class SimpleAuthorizationService implements AuthorizationService {
 
     @Override
     public Collection<Permission> getAllPermissions(Principal principal, AAAContext context) {
-        C.List<Permission> perms = C.list(getPermissions(principal, context)).lazy();
+        C.List<Permission> perms = C.newList(getPermissions(principal, context)).lazy();
         C.list(getRoles(principal, context)).accept(Role.F.PERMISSION_GETTER.andThen(C.F.addAllTo(perms)));
         return perms;
     }
