@@ -36,9 +36,15 @@ public class SimpleAuthorizationService implements AuthorizationService {
         C.list(getRoles(principal, context)).accept(Role.F.PERMISSION_GETTER.andThen(C.F.addAllTo(perms)));
         Set<Permission> retVal = C.newSet();
         for (Permission p : perms) {
-            retVal.add(p);
-            retVal.addAll(p.implied());
+            collectPermission(retVal, p);
         }
         return retVal;
+    }
+
+    private void collectPermission(Set<Permission> set, Permission p) {
+        for (Permission p0 : p.implied()) {
+            collectPermission(set, p0);
+        }
+        set.add(p);
     }
 }
