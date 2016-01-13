@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by luog on 16/01/14.
+ * Deprecated. Please use {@code org.osgl.util.Token} from osgl-tool-ext package instead
  */
+@Deprecated
 public class Token implements Serializable {
     public static enum Life {
         /**
