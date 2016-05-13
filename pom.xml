@@ -53,6 +53,8 @@
 * Add createSuperUser() on AAA
 * Support implied permission
 * update osgl tool to 0.9
+* Add AAA.setDefaultContext() method in case it needs to check permission of a principal on an
+  guarded object in a thread where the "current" context is not set by framework
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 

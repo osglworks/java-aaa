@@ -37,6 +37,12 @@ public enum  AAA {
 
     private static final Permission NULL_PERMISSION = null;
 
+    private static AAAContext defaultContext;
+
+    public static void setDefaultContext(AAAContext context) {
+        defaultContext = $.notNull(context);
+    }
+
     /**
      * Set AAAContext to thread local
      *
@@ -90,6 +96,9 @@ public enum  AAA {
      */
     @SuppressWarnings("unchecked")
     public static boolean hasAccessTo(Principal user, Guarded guarded, AAAContext context) {
+        if (null == context) {
+            context = defaultContext;
+        }
         E.NPE(user, guarded, context);
         AuthorizationService auth = context.getAuthorizationService();
         Privilege prU = auth.getPrivilege(user, context);
@@ -256,6 +265,20 @@ public enum  AAA {
     }
 
     /**
+     * A convenient way to check if a user has permission specified on a target
+     *
+     * This method will use {@link #defaultContext} to finish the work
+     *
+     * @param target the guarded object
+     * @param user the user principal
+     * @param permission the permission required
+     * @return {@code true} if the user has the permission on the target or {@code false} otherwise
+     */
+    public static boolean hasPermission(Object target, Principal user, Permission permission) {
+        return hasPermission(target, user, permission, defaultContext);
+    }
+
+    /**
      * Check if the principal specified has permission specified on the target.
      * <p>
      *     The current principal is get from the current context via
@@ -269,7 +292,13 @@ public enum  AAA {
      * @return {@code true} if the current principal has the permission
      */
     public static boolean hasPermission(Object target, Principal user, Permission permission, AAAContext context) {
-        if (null == user || null == permission || null == context) {
+        if (null == user || null == permission) {
+            return false;
+        }
+        if (null == context) {
+            context = defaultContext;
+        }
+        if (null == context) {
             return false;
         }
         if (context.allowSuperUser() && context.isSuperUser(user)) {
