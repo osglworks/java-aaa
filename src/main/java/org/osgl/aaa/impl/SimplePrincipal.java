@@ -1,7 +1,9 @@
 package org.osgl.aaa.impl;
 
 import org.osgl.$;
+import org.osgl.Osgl;
 import org.osgl.aaa.*;
+import org.osgl.exception.NotAppliedException;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.S;
@@ -18,6 +20,14 @@ import java.util.List;
  * </p>
  */
 public class SimplePrincipal extends AAAObjectBase implements Principal {
+
+    public static final $.Func1<Permission, Iterable<Permission>> EXPAND_PERMISSION =
+            new $.Func1<Permission, Iterable<Permission>>() {
+        @Override
+        public Iterable<Permission> apply(Permission permission) throws NotAppliedException, Osgl.Break {
+            return permission.implied();
+        }
+    };
 
     private Privilege privilege;
     private List<? extends Role> roles = C.list();
@@ -65,14 +75,14 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
 
     @Override
     public C.List<Permission> getAllPermissions() {
-        final C.List<Permission> list = getPermissions().lazy();
+        final C.Set<Permission> set = C.newSet(getPermissions());
         getRoles().accept(new $.Visitor<Role>() {
             @Override
             public void visit(Role role) throws $.Break {
-                list.append(role.getPermissions());
+                set.addAll(role.getPermissions());
             }
         });
-        return list;
+        return C.list(set.flatMap(EXPAND_PERMISSION));
     }
 
     public static final Principal createSystemPrincipal(String name) {

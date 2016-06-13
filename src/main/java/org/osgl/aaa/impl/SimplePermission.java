@@ -45,7 +45,10 @@ public class SimplePermission extends AAAObjectBase implements Permission {
 
     @Override
     public Set<Permission> implied() {
-        return C.set(implied);
+        Set<Permission> set = C.newSet();
+        set.addAll(implied);
+        set.add(this);
+        return set;
     }
 
     public static class Builder {

@@ -58,7 +58,9 @@ public class SimpleAuthorizationService implements AuthorizationService {
             logger.warn(new RuntimeException(""), "Null implied found on permission: %s", p.getName());
         }
         for (Permission p0 : p.implied()) {
-            collectPermission(set, p0);
+            if (p0 != p) {
+                collectPermission(set, p0);
+            }
         }
         set.add(p);
     }
