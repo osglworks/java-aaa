@@ -1,8 +1,7 @@
 java-aaa
 ========
 
-A simple and easy to use authentication/authorization/accounting library for Java. At the moment `java-aaa` implemented the Authentication and Authorization part. Accounting is yet TBD.
-
+A simple and easy to use authentication/authorization/accounting library for Java.
 ### Concepts
 
 **<a name="principal"></a>Principal**
