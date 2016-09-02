@@ -40,4 +40,11 @@ public interface AAAPersistentService {
      * @return the AAAObject instance
      */
     <T extends AAAObject> T findByName(String name, Class<T> clz);
+
+    /**
+     * Get a {@link Privilege} by level
+     * @param level
+     * @return a privilege object
+     */
+    Privilege findPrivilege(int level);
 }
