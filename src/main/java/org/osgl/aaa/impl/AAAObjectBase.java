@@ -2,6 +2,7 @@ package org.osgl.aaa.impl;
 
 import org.osgl.$;
 import org.osgl.aaa.AAAObject;
+import org.osgl.aaa.Privilege;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
@@ -42,6 +43,9 @@ public class AAAObjectBase implements AAAObject {
      */
     @Override
     public int hashCode() {
+        if (this instanceof Privilege) {
+            return ((Privilege) this).getLevel();
+        }
         return $.hc(name, getClass());
     }
 
@@ -59,6 +63,9 @@ public class AAAObjectBase implements AAAObject {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if ($.eq(obj.getClass(), getClass())) {
+            if (this instanceof Privilege) {
+                return $.eq(((Privilege) this).getLevel(),((Privilege)obj).getLevel());
+            }
             return $.eq(((AAAObject) obj).getName(), getName());
         }
         return false;
