@@ -15,6 +15,9 @@
   ~ under the License.
   -->
 <!-- history
+1.0.0-SNAPSHOT
+* Add `findPrivilege(int)` to `AAAPersistentService`
+
 0.9.1-SNAPSHOT
 * support accounting
 * Add createSuperUser() on AAA
@@ -67,7 +70,7 @@
     <groupId>org.osgl</groupId>
     <artifactId>aaa-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>Java AAA Service</name>
     <description>A simple authentication/authorization/accounting library</description>
