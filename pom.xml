@@ -15,39 +15,6 @@
   ~ under the License.
   -->
 <!-- history
-0.2-SNAPSHOT - base version when history log started
-0.3-SNAPSHOT - upgrade to osgl-tool 0.4-SNAPSHOT
-0.4.1-SNAPSHOT
-* overload AAA with new set of methods that allow passing in AAAContext as parameter
-  thus allow AAA to be used in a scenario without ThreadLocal storage
-* Remove unnecessary thread local usage in AAAContextBase
-* expose context() to public on AAA facade
-0.4.2-SNAPSHOT
-* Fix NPE in AAA.searchForDynamicPermissionCheckHelper
-* Fix logic error in AAA.searchDPCHfromInterfaces
-0.5.0-SNAPSHOT
-* DynamicPermissionHelperChecker now could be stick to permissions
-
-0.6.0-SNAPSHOT
-* Update OSGL Tool version
-
-0.7.0-SNAPSHOT
-* Add removeAll() to AAAPersistenceService
-* Add copy constructor to SimplePrincipal.Builder
-* Method signature changes in SimplePrincipal.Builder
-* Method signature changes in SimpleRole.Builder
-
-0.8.0-SNAPSHOT
-* AAAContext is now an abstract class
-* Added requireXxx methods to AAAContext class
-
-0.8.1-SNAPSHOT
-* @NoAuthenticate deprecated, @NoAuthentication is created to replace it
-* @RequireAuthenticate deprecated, @RequireAuthentication is created to replace it
-
-0.9.0-SNAPSHOT
-* update osgl tool to 0.8
-
 0.9.1-SNAPSHOT
 * support accounting
 * Add createSuperUser() on AAA
@@ -55,6 +22,43 @@
 * update osgl tool to 0.9
 * Add AAA.setDefaultContext() method in case it needs to check permission of a principal on an
   guarded object in a thread where the "current" context is not set by framework
+
+0.9.0-SNAPSHOT
+* update osgl tool to 0.8
+
+0.8.1-SNAPSHOT
+* @NoAuthenticate deprecated, @NoAuthentication is created to replace it
+* @RequireAuthenticate deprecated, @RequireAuthentication is created to replace it
+
+0.8.0-SNAPSHOT
+* AAAContext is now an abstract class
+* Added requireXxx methods to AAAContext class
+
+0.7.0-SNAPSHOT
+* Add removeAll() to AAAPersistenceService
+* Add copy constructor to SimplePrincipal.Builder
+* Method signature changes in SimplePrincipal.Builder
+* Method signature changes in SimpleRole.Builder
+
+0.6.0-SNAPSHOT
+* Update OSGL Tool version
+
+0.5.0-SNAPSHOT
+* DynamicPermissionHelperChecker now could be stick to permissions
+
+0.4.2-SNAPSHOT
+* Fix NPE in AAA.searchForDynamicPermissionCheckHelper
+* Fix logic error in AAA.searchDPCHfromInterfaces
+
+0.4.1-SNAPSHOT
+* overload AAA with new set of methods that allow passing in AAAContext as parameter
+  thus allow AAA to be used in a scenario without ThreadLocal storage
+* Remove unnecessary thread local usage in AAAContextBase
+* expose context() to public on AAA facade
+
+0.3-SNAPSHOT - upgrade to osgl-tool 0.4-SNAPSHOT
+
+0.2-SNAPSHOT - base version when history log started
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
