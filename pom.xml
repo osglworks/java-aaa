@@ -17,8 +17,7 @@
 <!-- history
 1.0.0-SNAPSHOT
 * Add `findPrivilege(int)` to `AAAPersistentService`
-* Deprecate `AuthenticationService.authenticate(String, String)` and replace it with
-  `AuthenticationService(String, char[])`
+* Add `AuthenticationService.authenticate(String, char[])` method
 
 0.9.1-SNAPSHOT
 * support accounting
