@@ -729,11 +729,25 @@ public enum  AAA {
         return null != userPrivilege && userPrivilege.getLevel() >= privilege.getLevel();
     }
 
+    public static boolean hasPrivilege(Principal user, int privilege, AAAContext context) {
+        AuthorizationService auth = context.getAuthorizationService();
+        Privilege userPrivilege = auth.getPrivilege(user, context);
+        return null != userPrivilege && userPrivilege.getLevel() >= privilege;
+    }
+
     public static void requirePrivilege(Privilege privilege) {
         requirePrivilege(privilege, true);
     }
 
+    public static void requirePrivilege(int privilege) {
+        requirePrivilege(privilege, true);
+    }
+
     public static void requirePrivilege(Privilege privilege, AAAContext context) {
+        requirePrivilege(privilege, true, context);
+    }
+
+    public static void requirePrivilege(int privilege, AAAContext context) {
         requirePrivilege(privilege, true, context);
     }
 
@@ -749,7 +763,16 @@ public enum  AAA {
         requirePrivilege(privilege, allowSystem, context());
     }
 
+    public static void requirePrivilege(int privilege, boolean allowSystem) {
+        requirePrivilege(privilege, allowSystem, context());
+    }
+
     public static void requirePrivilege(Privilege privilege, boolean allowSystem, AAAContext ctx) {
+        Principal user = ctx.getPrincipal(allowSystem);
+        requirePrivilege(user, privilege, ctx);
+    }
+
+    public static void requirePrivilege(int privilege, boolean allowSystem, AAAContext ctx) {
         Principal user = ctx.getPrincipal(allowSystem);
         requirePrivilege(user, privilege, ctx);
     }
@@ -763,6 +786,16 @@ public enum  AAA {
         Privilege p = db.findByName(privilege, Privilege.class);
         Principal user = ctx.getPrincipal(allowSystem);
         requirePrivilege(user, p, ctx);
+    }
+
+    public static void requirePrivilege(Principal user, int privilege, AAAContext context) {
+        Auditor auditor = context.getAuditor();
+        if (!hasPrivilege(user, privilege, context)) {
+            auditor.audit(null, user, null, String.valueOf(privilege), false, "");
+            noAccess();
+        } else {
+            auditor.audit(null, user, null, String.valueOf(privilege), true, "");
+        }
     }
 
     public static void requirePrivilege(Principal user, Privilege privilege, AAAContext context) {
