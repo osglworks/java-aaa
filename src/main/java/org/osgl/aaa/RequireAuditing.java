@@ -12,18 +12,18 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(java.lang.annotation.ElementType.METHOD)
-public @interface RequireAccounting {
+public @interface RequireAuditing {
     /**
      * Indicates the message to be logged
      *
-     * @return
+     * @return the auditing messsage
      */
     String value() default "";
     /**
-     * Set the time of accouting log, usually it should be true
+     * Set the time of auditing log, usually it should be true
      * But in rare case when it needs to log after the method executed (e.g. constructor)
      * then it could be set to false;
-     * @return
+     * @return `true` if it shall audit before authorization or `false` otherwise
      */
     boolean before() default true;
 }

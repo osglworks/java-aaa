@@ -32,8 +32,8 @@ public class SimpleRole extends AAAObjectBase implements Role {
     /**
      * Construct a role by name and given list of permissions
      *
-     * @param name
-     * @param perms
+     * @param name the name
+     * @param perms the permissions
      */
     public SimpleRole(String name, List<? extends Permission> perms) {
         super(name);

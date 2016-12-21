@@ -33,8 +33,8 @@ public interface Role extends AAAObject {
      * getPermissions().contains(permission)
      * </code>
      *
-     * @param permission
-     * @return
+     * @param permission permission
+     * @return `true` if the role has the permission or `false` otherwise
      */
     boolean hasPermission(Permission permission);
 

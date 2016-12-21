@@ -26,7 +26,7 @@ public class AAAObjectBase implements AAAObject {
     /**
      * Construct the AAAObject by name
      *
-     * @param name
+     * @param name the name
      */
     protected AAAObjectBase(String name) {
         if (S.blank(name)) throw new IllegalArgumentException("name cannot be empty string");
@@ -39,7 +39,7 @@ public class AAAObjectBase implements AAAObject {
      * properties are not considered here on the assumption that name is a unique identifier
      * for a certain type of AAAObject
      * </p>
-     * @return
+     * @return hashcode
      */
     @Override
     public int hashCode() {

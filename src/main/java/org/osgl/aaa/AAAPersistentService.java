@@ -8,20 +8,20 @@ public interface AAAPersistentService {
     /**
      * Save the AAAObject to persistent storage
      *
-     * @param aaaObject
+     * @param aaaObject the object
      */
     void save(AAAObject aaaObject);
 
     /**
      * Remove the AAAObject from persistent storage
-     * @param aaaObject
+     * @param aaaObject the object
      */
     void remove(AAAObject aaaObject);
 
     /**
      * Remove all AAAObject from persistent store
-     * @param clz
-     * @param <T>
+     * @param clz the class of the object to be removed
+     * @param <T> the generic type of the object to be removed
      */
     <T extends AAAObject> void removeAll(Class<T> clz);
 
@@ -34,16 +34,16 @@ public interface AAAPersistentService {
      * <li>{@link org.osgl.aaa.Principal Principal.class}</li>
      * </ul>
      *
-     * @param name
-     * @param clz
-     * @param <T>
+     * @param name the object name
+     * @param clz the class of the object
+     * @param <T> the generic type of the object
      * @return the AAAObject instance
      */
     <T extends AAAObject> T findByName(String name, Class<T> clz);
 
     /**
      * Get a {@link Privilege} by level
-     * @param level
+     * @param level the privilege level
      * @return a privilege object
      */
     Privilege findPrivilege(int level);

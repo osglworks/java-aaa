@@ -37,7 +37,7 @@ public interface AAAObject {
      * Returns the name of the object. The name shall be unique for certain type of
      * AAAObject
      *
-     * @return
+     * @return the name
      */
     String getName();
 

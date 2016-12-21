@@ -59,7 +59,7 @@ public abstract class AAAContext {
     /**
      * Set the current principal to a thread local variable. If the principal specified
      * is null then the thread local variable should be removed
-     * @param user
+     * @param user the pricipal
      */
     public abstract void setCurrentPrincipal(Principal user);
 

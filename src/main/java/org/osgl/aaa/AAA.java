@@ -380,6 +380,7 @@ public enum  AAA {
      * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
+     * @param context  the context
      * @throws NoAccessException if the principal does not have permission specified on
      *         the target object
      */
@@ -951,6 +952,7 @@ public enum  AAA {
 
     /**
      * Create a super user principal with name specified. The super user will have the {@link #SUPER_USER} privilege
+     * @param userName  the username
      * @return a principal as described above
      */
     public static Principal createSuperUser(String userName) {
