@@ -15,6 +15,11 @@
   ~ under the License.
   -->
 <!-- history
+1.2.0
+* #1 Rework on AAA facade, added a lot of convenient APIs
+* AAA.requirePermission() API supports passing no guarded resource when permission is not dynamic
+* #2 AAA and AAAPersistenceService now has APIs to return all roles, permissions and privileges
+
 1.1.1
 * take out version range. see (https://issues.apache.org/jira/browse/MNG-3092)
 
@@ -78,7 +83,7 @@
   <groupId>org.osgl</groupId>
   <artifactId>aaa-core</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 
   <name>Java AAA Service</name>
   <description>A simple authentication/authorization/accounting library</description>
@@ -195,6 +200,13 @@
             <configuration>
               <stylesheetfile>src/etc/javadoc.css</stylesheetfile>
               <quiet />
+              <doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+              <docletArtifact>
+                <groupId>ch.raffael.pegdown-doclet</groupId>
+                <artifactId>pegdown-doclet</artifactId>
+                <version>1.3</version>
+              </docletArtifact>
+              <useStandardDocletOptions>true</useStandardDocletOptions>
             </configuration>
             <executions>
               <execution>

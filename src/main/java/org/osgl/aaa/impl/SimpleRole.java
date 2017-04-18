@@ -43,7 +43,7 @@ public class SimpleRole extends AAAObjectBase implements Role {
 
     @Override
     public List<Permission> getPermissions() {
-        return (List<Permission>)C.list(perms);
+        return C.list(perms);
     }
 
     @Override

@@ -1,29 +1,20 @@
 package org.osgl.aaa;
 
+import org.osgl.$;
+
 /**
- * An {@code Guarded} encapsulates the permission or privilege required
- * to access a certain resource. It could have either permission or privilege
- * but not none. If both permission and privilege exists then if the principal's
- * credential matches any one, the access should be granted
+ * An {@code Guarded} encapsulates the permission required and the guarded resorce
  *
  * @author greenlaw110@gmail.com
  */
-public interface Guarded {
+interface Guarded {
 
     /**
      * Return the {@link Permission} required to access this object
      *
      * @return the permission required
-     * @see #getPrivilege()
      */
     Permission getPermission();
-
-    /**
-     * Return required {@link org.osgl.aaa.Privilege} to access this object
-     *
-     * @return privilege
-     */
-    Privilege getPrivilege();
 
     /**
      * Return target object that is guarded by the authorization
@@ -37,36 +28,25 @@ public interface Guarded {
     /**
      * Name space for default implementation and factory methods
      */
-    public static enum Factory {
+    enum Factory {
         ;
         private static class Base implements Guarded {
             Permission perm;
-            Privilege priv;
             Object tgt;
 
-            Base setPerm(Permission p) {
-                perm = p;
-                return this;
-            }
-
-            Base setPriv(Privilege p) {
-                priv = p;
+            Base setPermission(Permission p) {
+                perm = $.notNull(p);
                 return this;
             }
 
             Base setTarget(Object o) {
-                tgt = o;
+                tgt = $.notNull(o);
                 return this;
             }
 
             @Override
             public Permission getPermission() {
                 return perm;
-            }
-
-            @Override
-            public Privilege getPrivilege() {
-                return priv;
             }
 
             @Override
@@ -79,29 +59,10 @@ public interface Guarded {
             return new Base();
         }
 
-        public static Guarded byPermission(Permission p) {
-            return create().setPerm(p);
+        public static Guarded byPermission(Permission p, Object t) {
+            return create().setPermission(p).setTarget(t);
         }
 
-        public static Guarded byPrivilege(Privilege p) {
-            return create().setPriv(p);
-        }
-
-        public static Guarded byBoth(Permission pe, Privilege pr) {
-            return create().setPerm(pe).setPriv(pr);
-        }
-
-        public static Guarded byPermissionWithTarget(Permission p, Object t) {
-            return create().setPerm(p).setTarget(t);
-        }
-
-        public static Guarded byPrivilegeWithTarget(Privilege p, Object t) {
-            return create().setPriv(p).setTarget(t);
-        }
-
-        public static Guarded byBothWithTarget(Permission pe, Privilege pr, Object t) {
-            return create().setPerm(pe).setPriv(pr).setTarget(t);
-        }
     }
 
 }

@@ -2,7 +2,6 @@ package org.osgl.aaa.impl;
 
 import org.osgl.aaa.AAAObject;
 import org.osgl.aaa.Permission;
-import org.osgl.aaa.Role;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.S;
@@ -49,6 +48,11 @@ public class SimplePermission extends AAAObjectBase implements Permission {
         set.addAll(implied);
         set.add(this);
         return set;
+    }
+
+    // used for JSON serialization
+    public Set<Permission> getImplied() {
+        return implied;
     }
 
     public static class Builder {

@@ -32,7 +32,7 @@ public interface Permission extends AAAObject, java.security.acl.Permission {
      */
     Set<Permission> implied();
 
-    public static abstract class F extends AAAObject.F {
+    abstract class F extends AAAObject.F {
 
         public static $.Predicate<Permission> IS_DYNAMIC = new $.Predicate<Permission>() {
             @Override

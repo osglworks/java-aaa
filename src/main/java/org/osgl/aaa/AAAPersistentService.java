@@ -27,12 +27,15 @@ public interface AAAPersistentService {
 
     /**
      * Get the AAAObject by name and type. Where type should be one of
+     *
      * <ul>
      * <li>{@link org.osgl.aaa.Permission Permission.class}</li>
      * <li>{@link org.osgl.aaa.Privilege Privilege.class}</li>
      * <li>{@link org.osgl.aaa.Role Role.class}</li>
      * <li>{@link org.osgl.aaa.Principal Principal.class}</li>
      * </ul>
+     *
+     * It is recommended to implement a case insensitive search here
      *
      * @param name the object name
      * @param clz the class of the object
@@ -47,4 +50,40 @@ public interface AAAPersistentService {
      * @return a privilege object
      */
     Privilege findPrivilege(int level);
+
+    /**
+     * Returns all {@link Privilege privileges}
+     * @return all privileges in an {@link Iterable}
+     */
+    Iterable<Privilege> allPrivileges();
+
+    /**
+     * Returns all {@link Permission permissions}
+     * @return all permissions in an {@link Iterable}
+     */
+    Iterable<Permission> allPermissions();
+
+    /**
+     * Returns all {@link Role roles}
+     * @return all roles in an {@link Iterable}
+     */
+    Iterable<Role> allRoles();
+
+    /**
+     * Returns name of all {@link Privilege privileges}
+     * @return all privilege names in an {@link Iterable}
+     */
+    Iterable<String> allPrivilegeNames();
+
+    /**
+     * Returns name of all {@link Permission permissions}
+     * @return all permission names in an {@link Iterable}
+     */
+    Iterable<String> allPermissionNames();
+
+    /**
+     * Returns name of all {@link Role roles}
+     * @return all role names in an {@link Iterable}
+     */
+    Iterable<String> allRoleNames();
 }
