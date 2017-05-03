@@ -1335,6 +1335,7 @@ public enum  AAA {
      * @see #hasPrivilege(Privilege)
      */
     public static void requirePrivilege(int privilegeLevel, boolean allowSystem, AAAContext context) {
+        context = ensureContext(context);
         Principal user = context.getPrincipal(allowSystem);
         requirePrivilege(user, privilegeLevel, context);
     }
