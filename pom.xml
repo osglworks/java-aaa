@@ -83,7 +83,7 @@
   <groupId>org.osgl</groupId>
   <artifactId>aaa-core</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.1</version>
+  <version>1.2.2-SNAPSHOT</version>
 
   <name>Java AAA Service</name>
   <description>A simple authentication/authorization/accounting library</description>
