@@ -47,7 +47,7 @@ public interface Role extends AAAObject {
             }
         };
 
-        public static $.Visitor<Role> permissionVisitor(final $.Function<Permission, ?> visitor) {
+        public static $.Visitor<Role> permissionVisitor(final $.Visitor<Permission> visitor) {
             return new $.Visitor<Role>() {
                 @Override
                 public void visit(Role role) throws $.Break {

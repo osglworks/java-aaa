@@ -1,5 +1,6 @@
 package org.osgl.aaa.impl;
 
+import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.logging.LogManager;
 import org.osgl.logging.Logger;
@@ -38,7 +39,7 @@ public class SimpleAuthorizationService implements AuthorizationService {
     @Override
     public Collection<Permission> getAllPermissions(Principal principal, AAAContext context) {
         C.List<Permission> perms = C.newList(getPermissions(principal, context)).lazy();
-        C.list(getRoles(principal, context)).accept(Role.F.PERMISSION_GETTER.andThen(C.F.addAllTo(perms)));
+        C.list(getRoles(principal, context)).accept($.visitor(Role.F.PERMISSION_GETTER.andThen(C.F.addAllTo(perms))));
         Set<Permission> retVal = C.newSet();
         for (Permission p : perms) {
             if (null == p) {

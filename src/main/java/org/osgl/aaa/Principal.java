@@ -51,7 +51,7 @@ public interface Principal extends AAAObject, java.security.Principal {
             }
         };
 
-        public static $.Visitor<Principal> roleVisitor(final $.Function<Role, ?> visitor) {
+        public static $.Visitor<Principal> roleVisitor(final $.Visitor<Role> visitor) {
             return new $.Visitor<Principal>() {
                 @Override
                 public void visit(Principal principal) throws $.Break {
@@ -67,7 +67,7 @@ public interface Principal extends AAAObject, java.security.Principal {
             }
         };
 
-        public static $.Visitor<Principal> permissionVisitor(final $.Function<Permission, ?> visitor) {
+        public static $.Visitor<Principal> permissionVisitor(final $.Visitor<Permission> visitor) {
             return new $.Visitor<Principal>() {
                 @Override
                 public void visit(Principal principal) throws $.Break {
@@ -83,7 +83,7 @@ public interface Principal extends AAAObject, java.security.Principal {
             }
         };
 
-        public static $.Visitor<Principal> allPermissionVisitor(final $.Function<Permission, ?> visitor) {
+        public static $.Visitor<Principal> allPermissionVisitor(final $.Visitor<Permission> visitor) {
             return new $.Visitor<Principal>() {
                 @Override
                 public void visit(Principal principal) throws $.Break {
