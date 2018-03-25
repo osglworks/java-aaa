@@ -1,5 +1,8 @@
 # CHANGELOG - osgl-aaa
 
+1.3.2 - 25/Mar/2018
+* update osgl-tool to 1.8.1
+
 1.3.1 - 25/Mar/2018
 * update to osgl-tool-1.8.0
 
