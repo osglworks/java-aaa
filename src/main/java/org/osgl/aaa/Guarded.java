@@ -55,12 +55,12 @@ interface Guarded {
             Object tgt;
 
             Base setPermission(Permission p) {
-                perm = $.notNull(p);
+                perm = $.requireNotNull(p);
                 return this;
             }
 
             Base setTarget(Object o) {
-                tgt = $.notNull(o);
+                tgt = $.requireNotNull(o);
                 return this;
             }
 

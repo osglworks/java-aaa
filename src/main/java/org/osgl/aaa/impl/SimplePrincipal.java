@@ -21,7 +21,6 @@ package org.osgl.aaa.impl;
  */
 
 import org.osgl.$;
-import org.osgl.Osgl;
 import org.osgl.aaa.*;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.util.C;
@@ -44,7 +43,7 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
     public static final $.Func1<Permission, Iterable<Permission>> EXPAND_PERMISSION =
             new $.Func1<Permission, Iterable<Permission>>() {
         @Override
-        public Iterable<Permission> apply(Permission permission) throws NotAppliedException, Osgl.Break {
+        public Iterable<Permission> apply(Permission permission) throws NotAppliedException, $.Break {
             return permission.implied();
         }
     };

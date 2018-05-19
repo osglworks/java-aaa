@@ -64,7 +64,7 @@ public enum  AAA {
     private static AAAContext defaultContext;
 
     public static void setDefaultContext(AAAContext context) {
-        defaultContext = $.notNull(context);
+        defaultContext = $.requireNotNull(context);
     }
 
     /**
