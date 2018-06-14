@@ -22,7 +22,7 @@
 
   <artifactId>aaa-core</artifactId>
   <packaging>jar</packaging>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.4.0</version>
 
   <name>Java AAA Service</name>
   <description>A simple authentication/authorization/accounting library</description>
