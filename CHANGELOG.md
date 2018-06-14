@@ -1,5 +1,8 @@
 # CHANGELOG - osgl-aaa
 
+1.4.0 - 14/Jun/2018
+* update osgl-tool to 1.15.1
+
 1.3.3 - 19/May/2018
 * update osgl-tool to 1.13.1
 * update osgl-cache to 1.4.0
