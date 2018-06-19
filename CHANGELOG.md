@@ -1,5 +1,9 @@
 # CHANGELOG - osgl-aaa
 
+1.5.0 - 19/Jun/2018
+* update to osgl-tool 1.16.0
+* Remove `Principal.getAllPermissions()` method #4 (broken change) 
+
 1.4.0 - 14/Jun/2018
 * update osgl-tool to 1.15.1
 

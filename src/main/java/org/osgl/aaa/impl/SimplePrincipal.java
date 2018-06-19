@@ -84,24 +84,12 @@ public class SimplePrincipal extends AAAObjectBase implements Principal {
 
     @Override
     public C.List<Role> getRoles() {
-        return (C.List<Role>)C.list(roles);
+        return C.list(roles);
     }
 
     @Override
     public C.List<Permission> getPermissions() {
-        return (C.List<Permission>)C.list(perms);
-    }
-
-    @Override
-    public C.List<Permission> getAllPermissions() {
-        final C.Set<Permission> set = C.newSet(getPermissions());
-        getRoles().accept(new $.Visitor<Role>() {
-            @Override
-            public void visit(Role role) throws $.Break {
-                set.addAll(role.getPermissions());
-            }
-        });
-        return C.list(set.flatMap(EXPAND_PERMISSION));
+        return C.list(perms);
     }
 
     public static final Principal createSystemPrincipal(String name) {

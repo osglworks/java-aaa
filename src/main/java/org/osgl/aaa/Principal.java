@@ -54,14 +54,6 @@ public interface Principal extends AAAObject, java.security.Principal {
      */
     List<Permission> getPermissions();
 
-    /**
-     * Returns {@link #getPermissions() permissions} granted to the principal
-     * plus all permissions in all {@link #getRoles() roles} of the principal
-     *
-     * @return all permissions been granted to the principal
-     */
-    List<Permission> getAllPermissions();
-
     public static abstract class F extends AAAObject.F {
 
         public static $.F1<Principal, C.List<Role>> ROLE_GETTER = new $.F1<Principal, C.List<Role>>() {
@@ -99,7 +91,7 @@ public interface Principal extends AAAObject, java.security.Principal {
         public static $.F1<Principal, C.List<Permission>> ALL_PERMISSION_GETTER = new $.F1<Principal, C.List<Permission>>() {
             @Override
             public C.List<Permission> apply(Principal principal) throws NotAppliedException, $.Break {
-                return C.list(principal.getAllPermissions());
+                return C.list(allPermissionsOf(principal));
             }
         };
 
@@ -107,9 +99,17 @@ public interface Principal extends AAAObject, java.security.Principal {
             return new $.Visitor<Principal>() {
                 @Override
                 public void visit(Principal principal) throws $.Break {
-                    C.list(principal.getAllPermissions()).accept(visitor);
+                    C.list(allPermissionsOf(principal)).accept(visitor);
                 }
             };
+        }
+
+        public static List<Permission> allPermissionsOf(Principal principal) {
+            final C.Set<Permission> set = C.newSet(principal.getPermissions());
+            for (Role role : principal.getRoles()) {
+                set.addAll(role.getPermissions());
+            }
+            return C.list(set);
         }
     }
 }
