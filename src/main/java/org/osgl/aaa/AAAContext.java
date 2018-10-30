@@ -21,6 +21,7 @@ package org.osgl.aaa;
  */
 
 import org.osgl.aaa.impl.Anonymous;
+import org.osgl.aaa.impl.SimplePrivilege;
 
 @SuppressWarnings("unused")
 public abstract class AAAContext {
@@ -139,7 +140,8 @@ public abstract class AAAContext {
      * @return a privilege object
      */
     public Privilege findPrivilege(int level) {
-        return getPersistentService().findPrivilege(level);
+        Privilege p = getPersistentService().findPrivilege(level);
+        return null != p ? p : new SimplePrivilege("p-" + level, level);
     }
 
     /**

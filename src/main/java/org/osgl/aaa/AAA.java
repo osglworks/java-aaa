@@ -1424,8 +1424,7 @@ public enum  AAA {
      */
     public static void requirePrivilege(Principal principal, int privilegeLevel, AAAContext context) {
         context = ensureContext(context);
-        AAAPersistentService persistentService = context.getPersistentService();
-        Privilege privilege = persistentService.findPrivilege(privilegeLevel);
+        Privilege privilege = context.findPrivilege(privilegeLevel);
         requirePrivilege(principal, privilegeLevel, privilege.getName(), context);
     }
 
@@ -1825,7 +1824,7 @@ public enum  AAA {
         context = ensureContext(context);
         boolean authorized = hasPermissionOrPrivilege(guardedResource, principal, permissionName, privilegeLevel, context);
         Auditor auditor = context.getAuditor();
-        auditor.audit(guardedResource, principal, permissionName, context.getPersistentService().findPrivilege(privilegeLevel).getName(), authorized, "");
+        auditor.audit(guardedResource, principal, permissionName, context.findPrivilege(privilegeLevel).getName(), authorized, "");
         if (!authorized) {
             noAccess();
         }
