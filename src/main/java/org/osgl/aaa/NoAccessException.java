@@ -21,6 +21,10 @@ package org.osgl.aaa;
  */
 
 
+/**
+ * This class is deprecated. Please use {@link org.osgl.exception.AccessDeniedException} instead
+ */
+@Deprecated
 public class NoAccessException extends RuntimeException {
 
     private static final long serialVersionUID = 1080270792010078044L;

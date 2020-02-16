@@ -22,6 +22,7 @@ package org.osgl.aaa;
 
 import org.osgl.aaa.impl.Anonymous;
 import org.osgl.aaa.impl.SimplePrivilege;
+import org.osgl.exception.AccessDeniedException;
 
 @SuppressWarnings("unused")
 public abstract class AAAContext {
@@ -192,39 +193,39 @@ public abstract class AAAContext {
         return getPersistentService().allRoleNames();
     }
 
-    public boolean hasPermission(Permission permission) throws NoAccessException {
+    public boolean hasPermission(Permission permission) throws AccessDeniedException {
         return AAA.hasPermission(null, permission, true, this);
     }
 
-    public boolean hasPermission(String permissionName) throws NoAccessException {
+    public boolean hasPermission(String permissionName) throws AccessDeniedException {
         return AAA.hasPermission(null, permissionName, true, this);
     }
 
-    public boolean hasPermission(Enum<?> permissionEnum) throws NoAccessException {
+    public boolean hasPermission(Enum<?> permissionEnum) throws AccessDeniedException {
         return AAA.hasPermission(null, permissionEnum, true, this);
     }
 
-    public boolean hasPermission(Permission permissionName, boolean allowSystem) throws NoAccessException {
+    public boolean hasPermission(Permission permissionName, boolean allowSystem) throws AccessDeniedException {
         return AAA.hasPermission(null, permissionName, allowSystem, this);
     }
 
-    public boolean hasPermission(String permissionName, boolean allowSystem) throws NoAccessException {
+    public boolean hasPermission(String permissionName, boolean allowSystem) throws AccessDeniedException {
         return AAA.hasPermission(null, permissionName, allowSystem, this);
     }
 
-    public boolean hasPermission(Enum<?> permissionEnum, boolean allowSystem) throws NoAccessException {
+    public boolean hasPermission(Enum<?> permissionEnum, boolean allowSystem) throws AccessDeniedException {
         return AAA.hasPermission(null, permissionEnum, allowSystem, this);
     }
 
-    public boolean hasPermission(Object guardedResource, Permission permission) throws NoAccessException {
+    public boolean hasPermission(Object guardedResource, Permission permission) throws AccessDeniedException {
         return AAA.hasPermission(guardedResource, permission, true, this);
     }
 
-    public boolean hasPermission(Object guardedResource, String permissionName) throws NoAccessException {
+    public boolean hasPermission(Object guardedResource, String permissionName) throws AccessDeniedException {
         return AAA.hasPermission(guardedResource, permissionName, true, this);
     }
 
-    public boolean hasPermission(Object guardedResource, Enum<?> permissionEnum) throws NoAccessException {
+    public boolean hasPermission(Object guardedResource, Enum<?> permissionEnum) throws AccessDeniedException {
         return AAA.hasPermission(guardedResource, permissionEnum, true, this);
     }
 
@@ -240,59 +241,59 @@ public abstract class AAAContext {
         return AAA.hasPermission(guardedResource, permissionEnum, allowSystem, this);
     }
 
-    public boolean hasPermission(Principal principal, Permission permission) throws NoAccessException {
+    public boolean hasPermission(Principal principal, Permission permission) throws AccessDeniedException {
         return AAA.hasPermission(null, principal, permission, this);
     }
 
-    public boolean hasPermission(Principal principal, String permissionName) throws NoAccessException {
+    public boolean hasPermission(Principal principal, String permissionName) throws AccessDeniedException {
         return AAA.hasPermission(null, principal, permissionName, this);
     }
 
-    public boolean hasPermission(Principal principal, Enum<?> permissionEnum) throws NoAccessException {
+    public boolean hasPermission(Principal principal, Enum<?> permissionEnum) throws AccessDeniedException {
         return AAA.hasPermission(null, principal, permissionEnum, this);
     }
 
-    public boolean hasPermission(Principal principal, Object guardedResource, String permissionName) throws NoAccessException {
+    public boolean hasPermission(Principal principal, Object guardedResource, String permissionName) throws AccessDeniedException {
         return AAA.hasPermission(guardedResource, principal, permissionName, this);
     }
 
-    public boolean hasPermission(Principal principal, Object guardedResource, Enum<?> permissionEnum) throws NoAccessException {
+    public boolean hasPermission(Principal principal, Object guardedResource, Enum<?> permissionEnum) throws AccessDeniedException {
         return AAA.hasPermission(guardedResource, principal, permissionEnum, this);
     }
 
-    public void requirePermission(Permission permission) throws NoAccessException {
+    public void requirePermission(Permission permission) throws AccessDeniedException {
         AAA.requirePermission(null, permission, this);
     }
 
-    public void requirePermission(String permissionName) throws NoAccessException {
+    public void requirePermission(String permissionName) throws AccessDeniedException {
         AAA.requirePermission(null, permissionName, this);
     }
 
-    public void requirePermission(Enum<?> permissionEnum) throws NoAccessException {
+    public void requirePermission(Enum<?> permissionEnum) throws AccessDeniedException {
         AAA.requirePermission(null, permissionEnum, this);
     }
 
-    public void requirePermission(Permission permissionName, boolean allowSystem) throws NoAccessException {
+    public void requirePermission(Permission permissionName, boolean allowSystem) throws AccessDeniedException {
         AAA.requirePermission(null, permissionName, allowSystem, this);
     }
 
-    public void requirePermission(String permissionName, boolean allowSystem) throws NoAccessException {
+    public void requirePermission(String permissionName, boolean allowSystem) throws AccessDeniedException {
         AAA.requirePermission(null, permissionName, allowSystem, this);
     }
 
-    public void requirePermission(Enum<?> permissionEnum, boolean allowSystem) throws NoAccessException {
+    public void requirePermission(Enum<?> permissionEnum, boolean allowSystem) throws AccessDeniedException {
         AAA.requirePermission(null, permissionEnum, allowSystem, this);
     }
 
-    public void requirePermission(Object guardedResource, Permission permission) throws NoAccessException {
+    public void requirePermission(Object guardedResource, Permission permission) throws AccessDeniedException {
         AAA.requirePermission(guardedResource, permission, this);
     }
 
-    public void requirePermission(Object guardedResource, String permissionName) throws NoAccessException {
+    public void requirePermission(Object guardedResource, String permissionName) throws AccessDeniedException {
         AAA.requirePermission(guardedResource, permissionName, this);
     }
 
-    public void requirePermission(Object guardedResource, Enum<?> permissionEnum) throws NoAccessException {
+    public void requirePermission(Object guardedResource, Enum<?> permissionEnum) throws AccessDeniedException {
         AAA.requirePermission(guardedResource, permissionEnum, this);
     }
 
@@ -308,23 +309,23 @@ public abstract class AAAContext {
         AAA.requirePermission(guardedResource, permissionEnum, allowSystem, this);
     }
 
-    public void requirePermission(Principal principal, Permission permission) throws NoAccessException {
+    public void requirePermission(Principal principal, Permission permission) throws AccessDeniedException {
         AAA.requirePermission(null, principal, permission, this);
     }
 
-    public void requirePermission(Principal principal, String permissionName) throws NoAccessException {
+    public void requirePermission(Principal principal, String permissionName) throws AccessDeniedException {
         AAA.requirePermission(null, principal, permissionName, this);
     }
 
-    public void requirePermission(Principal principal, Enum<?> permissionEnum) throws NoAccessException {
+    public void requirePermission(Principal principal, Enum<?> permissionEnum) throws AccessDeniedException {
         AAA.requirePermission(null, principal, permissionEnum, this);
     }
 
-    public void requirePermission(Principal principal, Object guardedResource, String permissionName) throws NoAccessException {
+    public void requirePermission(Principal principal, Object guardedResource, String permissionName) throws AccessDeniedException {
         AAA.requirePermission(guardedResource, principal, permissionName, this);
     }
 
-    public void requirePermission(Principal principal, Object guardedResource, Enum<?> permissionEnum) throws NoAccessException {
+    public void requirePermission(Principal principal, Object guardedResource, Enum<?> permissionEnum) throws AccessDeniedException {
         AAA.requirePermission(guardedResource, principal, permissionEnum, this);
     }
 

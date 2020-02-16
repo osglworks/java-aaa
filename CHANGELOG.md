@@ -1,5 +1,9 @@
 # CHANGELOG - osgl-aaa
 
+1.9.0
+* update to osgl-tool-1.24.0
+* Use `org.osgl.exceptions.AccessDeniedException` to replace `org.osgl.aaa.NoAccessException`
+
 1.8.0 - 03/Nov/2019
 * update to osgl-tool-1.21.0
 

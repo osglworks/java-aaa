@@ -23,6 +23,7 @@ package org.osgl.aaa;
 import org.osgl.$;
 import org.osgl.aaa.impl.SimplePrincipal;
 import org.osgl.aaa.impl.SimplePrivilege;
+import org.osgl.exception.AccessDeniedException;
 import org.osgl.logging.LogManager;
 import org.osgl.logging.Logger;
 import org.osgl.util.C;
@@ -440,10 +441,10 @@ public enum  AAA {
      * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permission the permission name
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Permission permission) throws NoAccessException {
+    public static void requirePermission(Permission permission) throws AccessDeniedException {
         requirePermission(null, permission, true, null);
     }
 
@@ -454,10 +455,10 @@ public enum  AAA {
      * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permissionName the permission name
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(String permissionName) throws NoAccessException {
+    public static void requirePermission(String permissionName) throws AccessDeniedException {
         requirePermission(null, permissionName, true, null);
     }
 
@@ -468,10 +469,10 @@ public enum  AAA {
      * {@link Auditor#audit(Object, Principal, String, String, boolean, String)}, where
      * the auditor is retrieved from {@link AAAContext#getAuditor()}
      * @param permissionEnum the enum that provides the permission name
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Enum<?> permissionEnum) throws NoAccessException {
+    public static void requirePermission(Enum<?> permissionEnum) throws AccessDeniedException {
         requirePermission(null, permissionEnum.name(), true, null);
     }
 
@@ -484,10 +485,10 @@ public enum  AAA {
      * @param permission the permission
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Permission permission, boolean allowSystem) throws NoAccessException {
+    public static void requirePermission(Permission permission, boolean allowSystem) throws AccessDeniedException {
         requirePermission(null, permission, allowSystem);
     }
 
@@ -500,10 +501,10 @@ public enum  AAA {
      * @param permissionName the permission name
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(String permissionName, boolean allowSystem) throws NoAccessException {
+    public static void requirePermission(String permissionName, boolean allowSystem) throws AccessDeniedException {
         requirePermission(null, permissionName, allowSystem);
     }
 
@@ -516,10 +517,10 @@ public enum  AAA {
      * @param permissionEnum the enum that provides the permission name
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Enum<?> permissionEnum, boolean allowSystem) throws NoAccessException {
+    public static void requirePermission(Enum<?> permissionEnum, boolean allowSystem) throws AccessDeniedException {
         requirePermission(null, permissionEnum.name(), allowSystem);
     }
 
@@ -532,9 +533,9 @@ public enum  AAA {
      *
      * @param permission the permission object
      * @param context the AAAContext
-     * @throws NoAccessException when current user does not have permission against current target
+     * @throws AccessDeniedException when current user does not have permission against current target
      */
-    public static void requirePermission(Permission permission, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Permission permission, AAAContext context) throws AccessDeniedException {
         requirePermission(null, permission, true, context);
     }
 
@@ -547,10 +548,10 @@ public enum  AAA {
      *
      * @param permissionName the permission name
      * @param context  the context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(String permissionName, AAAContext context) throws NoAccessException {
+    public static void requirePermission(String permissionName, AAAContext context) throws AccessDeniedException {
         requirePermission(null, permissionName, true, context);
     }
 
@@ -563,10 +564,10 @@ public enum  AAA {
      *
      * @param permissionEnum the enum that provides the permission name
      * @param context the context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Enum<?> permissionEnum, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Enum<?> permissionEnum, AAAContext context) throws AccessDeniedException {
         requirePermission(null, permissionEnum.name(), true, context);
     }
 
@@ -581,10 +582,10 @@ public enum  AAA {
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
      * @param context the {@link AAAContext aaa context}
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Permission permission, boolean allowSystem, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Permission permission, boolean allowSystem, AAAContext context) throws AccessDeniedException {
         requirePermission(null, permission, allowSystem, context);
     }
 
@@ -599,10 +600,10 @@ public enum  AAA {
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
      * @param context the {@link AAAContext aaa context}
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(String permissionName, boolean allowSystem, AAAContext context) throws NoAccessException {
+    public static void requirePermission(String permissionName, boolean allowSystem, AAAContext context) throws AccessDeniedException {
         requirePermission(null, permissionName, allowSystem, context);
     }
 
@@ -617,10 +618,10 @@ public enum  AAA {
      * @param allowSystem if {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    in this context
      * @param context the {@link AAAContext aaa context}
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Enum<?> permissionEnum, boolean allowSystem, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Enum<?> permissionEnum, boolean allowSystem, AAAContext context) throws AccessDeniedException {
         requirePermission(null, permissionEnum.name(), allowSystem, context);
     }
 
@@ -633,10 +634,10 @@ public enum  AAA {
      *
      * @param guardedResource the guarded object
      * @param permission the permission
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Object guardedResource, Permission permission) throws NoAccessException {
+    public static void requirePermission(Object guardedResource, Permission permission) throws AccessDeniedException {
         requirePermission(guardedResource, permission, true, null);
     }
 
@@ -649,10 +650,10 @@ public enum  AAA {
      *
      * @param guardedResource the guarded object
      * @param permissionName the permission name
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Object guardedResource, String permissionName) throws NoAccessException {
+    public static void requirePermission(Object guardedResource, String permissionName) throws AccessDeniedException {
         requirePermission(guardedResource, permissionName, true, null);
     }
 
@@ -665,10 +666,10 @@ public enum  AAA {
      *
      * @param guardedResource the guarded object
      * @param permissionEnum the enum that provides the permission name
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Object guardedResource, Enum<?> permissionEnum) throws NoAccessException {
+    public static void requirePermission(Object guardedResource, Enum<?> permissionEnum) throws AccessDeniedException {
         requirePermission(guardedResource, permissionEnum.name(), true, null);
     }
 
@@ -682,11 +683,11 @@ public enum  AAA {
      * @param guardedResource the guarded object
      * @param permission the permission
      * @param context the AAA context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     @SuppressWarnings("unused")
-    public static void requirePermission(Object guardedResource, Permission permission, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Object guardedResource, Permission permission, AAAContext context) throws AccessDeniedException {
         requirePermission(guardedResource, permission, true, context);
     }
 
@@ -700,10 +701,10 @@ public enum  AAA {
      * @param guardedResource the guarded object
      * @param permissionName the permission name
      * @param context the AAA context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Object guardedResource, String permissionName, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Object guardedResource, String permissionName, AAAContext context) throws AccessDeniedException {
         requirePermission(guardedResource, permissionName, true, context);
     }
 
@@ -717,10 +718,10 @@ public enum  AAA {
      * @param guardedResource the guarded object
      * @param permissionEnum the enum that provides the permission name
      * @param context the AAA context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
-    public static void requirePermission(Object guardedResource, Enum<?> permissionEnum, AAAContext context) throws NoAccessException {
+    public static void requirePermission(Object guardedResource, Enum<?> permissionEnum, AAAContext context) throws AccessDeniedException {
         requirePermission(guardedResource, permissionEnum.name(), true, context);
     }
 
@@ -735,7 +736,7 @@ public enum  AAA {
      * @param permission the permission
      * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    to access the resource
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Permission permission, boolean allowSystem) {
@@ -754,7 +755,7 @@ public enum  AAA {
      * @param permissionName the permission name
      * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    to access the resource
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, String permissionName, boolean allowSystem) {
@@ -772,7 +773,7 @@ public enum  AAA {
      * @param permissionEnum the enum that provides the permission name
      * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    to access the resource
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Enum<?> permissionEnum, boolean allowSystem) {
@@ -792,7 +793,7 @@ public enum  AAA {
      * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    to access the resource
      * @param context the AAA Context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Permission permission, boolean allowSystem, AAAContext context) {
@@ -813,7 +814,7 @@ public enum  AAA {
      * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    to access the resource
      * @param context the AAA Context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, String permissionName, boolean allowSystem, AAAContext context) {
@@ -834,7 +835,7 @@ public enum  AAA {
      * @param allowSystem whether {@link AAAContext#getSystemPrincipal() system principal} is allowed
      *                    to access the resource
      * @param context the AAA Context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Enum<?> permissionEnum, boolean allowSystem, AAAContext context) {
@@ -854,7 +855,7 @@ public enum  AAA {
      * @param principal the principal
      * @param permission the permission
      * @param context the AAA Context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Principal principal, Permission permission, AAAContext context) {
@@ -878,7 +879,7 @@ public enum  AAA {
      * @param principal the principal
      * @param permissionName the name of the permission required
      * @param context the AAA Context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Principal principal, String permissionName, AAAContext context) {
@@ -898,7 +899,7 @@ public enum  AAA {
      * @param principal the principal
      * @param permissionEnum the enum that provides the name of the permission required
      * @param context the AAA Context
-     * @throws NoAccessException if the principal does not have permission specified on
+     * @throws AccessDeniedException if the principal does not have permission specified on
      *         the target object
      */
     public static void requirePermission(Object guardedResource, Principal principal, Enum<?> permissionEnum, AAAContext context) {
@@ -1956,7 +1957,8 @@ public enum  AAA {
     }
 
     private static void noAccess() {
-        throw new NoAccessException();
+        //throw new AccessDeniedException();
+        throw new AccessDeniedException();
     }
 
 
