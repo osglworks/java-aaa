@@ -29,7 +29,7 @@ import java.util.Set;
  * This interface represents a permission, such as that used to grant
  * a particular type of access to a resource.
  */
-public interface Permission extends AAAObject, java.security.acl.Permission {
+public interface Permission extends AAAObject {
 
     /**
      * Whether this right is dynamic. An example of dynamic right is a customer has

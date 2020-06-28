@@ -1,5 +1,8 @@
 # CHANGELOG - osgl-aaa
 
+1.10.0 - 28/Jun/2020
+* Remove dependency on `java.security.acl` package #6
+
 1.9.1 - 27/Jun/2020
 * update to osgl-tool-1.25.0
 
